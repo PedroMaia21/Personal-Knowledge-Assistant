@@ -118,6 +118,13 @@ Personal-Knowledge-Assistant/
 
 ---
 
+### Versions during development
+
+**Python**: 3.14.2
+**Pip**: 25.3
+**Ollama**: 0.24.0
+---
+
 ## Scope Definition
 
 ### MVP Scope
@@ -139,13 +146,13 @@ For version 1, the assistant only needs to:
 **Goal**
 Get local AI Working
 
-- [] Install Python + Create Project
+- [x] Install Python + Create Project
     - [x] Project Folder
-    - [] virtual environment
+    - [x] virtual environment
     - [x] git repository
-- [] Install Ollama
-    - [] Ollama Installed
-    - [] local model running
+- [ ] Install Ollama
+    - [ ] Ollama Installed
+    - [ ] local model running
     - Test:
 ```bash
 ollama run llama3.1:8b
@@ -153,7 +160,7 @@ ollama run llama3.1:8b
 ```bash
 ollama run nomic-embed-text
 ```
-- [] Create basic FastAPI App
+- [ ] Create basic FastAPI App
     - Example:
 ```python
 @app.get("/")
@@ -168,12 +175,12 @@ def root():
 **Goal**
 Talk to the local model
 
-- [] Install Ollama Python Client
+- [ ] Install Ollama Python Client
     - Instalation:
 ```bash
 pip install ollama
 ```
-- [] Create simple chat script
+- [ ] Create simple chat script
     - CLI Example:
 ```
 You: summarize productivity systems
@@ -187,12 +194,12 @@ AI: ...
 **Goal**
 Load Files
 
-- [] Create Document Loader
-    - [] read `.txt`
-    - [] read `.md`
-    - [] iterate folder contents
-- [] Implement Text Chunking
-    - [] Split large text into chunks
+- [ ] Create Document Loader
+    - [ ] read `.txt`
+    - [ ] read `.md`
+    - [ ] iterate folder contents
+- [ ] Implement Text Chunking
+    - [ ] Split large text into chunks
     - Strategy:
         - 500–1000 characters
         - overlap of 100
@@ -204,17 +211,17 @@ Load Files
 **Goal**
 Semantic Search
 
-- [] Install ChromaDB
+- [ ] Install ChromaDB
 ```bash
 pip install chromadb
 ```
-- [] Generate Embeddings
-    - [] Generate embeddings for chunks
+- [ ] Generate Embeddings
+    - [ ] Generate embeddings for chunks
 ```python
 nomic-embed-text
 ```
-- [] Store Embeddings in ChromaDB
-- [] Implement Semantic Search
+- [ ] Store Embeddings in ChromaDB
+- [ ] Implement Semantic Search
     - Input: `"What were the productivity review conclusions?"`
     - Outputs:
         - top relevant chunks
@@ -226,7 +233,7 @@ nomic-embed-text
 **Goal**
 Combine retrieval + Generation
 
-- [] Create Retrieval Prompt
+- [ ] Create Retrieval Prompt
 **Prompt Structure:**
 ```
 Use ONLY the provided context.
@@ -237,7 +244,7 @@ Context:
 Question:
 ...
 ```
-- [] Implement RAG pipeline
+- [ ] Implement RAG pipeline
 **Flow:**
 ```
 Question
@@ -251,12 +258,12 @@ Question
 
 ### Phase 6 - Quality Improvements
 
-- [] Add source references
+- [ ] Add source references
     - Example: `Source: weekly_review_may.txt`
-- [] Add converation memory
+- [ ] Add converation memory
     - Store:
-        - [] previous questions
-        - [] previous answers
+        - [ ] previous questions
+        - [ ] previous answers
     - Simple in-memory list is enough.
 
 ---
@@ -264,19 +271,19 @@ Question
 ### Phase 7 - Optional UI
 Only when backend works
 
-- [] Create Streamlit interface
-    - [] Upload file
-    - [] Ask Questions
-    - [] Show Answers
+- [ ] Create Streamlit interface
+    - [ ] Upload file
+    - [ ] Ask Questions
+    - [ ] Show Answers
 
 --- 
 
 ### Phase 8 - Nice Extra Features
 Later
 
-- [] TODO Extraction
+- [ ] TODO Extraction
     - Prompt: `Extract actionable tasks from this text.`
-- [] Weekly Review Generator
+- [ ] Weekly Review Generator
     - Input
         - Notes
         - Logs
