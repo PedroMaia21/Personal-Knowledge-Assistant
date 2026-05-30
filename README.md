@@ -104,7 +104,8 @@ Personal-Knowledge-Assistant/
 │   ├── query.py
 │   ├── prompts.py
 │   ├── chunking.py
-│   └── utils.py
+│   ├── utils.py
+|   └── loader.py
 │
 ├── data/
 │   ├── raw/
@@ -194,10 +195,10 @@ AI: ...
 **Goal**
 Load Files
 
-- [ ] Create Document Loader
-    - [ ] read `.txt`
-    - [ ] read `.md`
-    - [ ] iterate folder contents
+- [x] Create Document Loader
+    - [x] read `.txt`
+    - [x] read `.md`
+    - [x] iterate folder contents
 - [ ] Implement Text Chunking
     - [ ] Split large text into chunks
     - Strategy:
