@@ -150,9 +150,9 @@ Get local AI Working
     - [x] Project Folder
     - [x] virtual environment
     - [x] git repository
-- [ ] Install Ollama
-    - [ ] Ollama Installed
-    - [ ] local model running
+- [x] Install Ollama
+    - [x] Ollama Installed
+    - [x] local model running
     - Test:
 ```bash
 ollama run llama3.1:8b
@@ -160,7 +160,7 @@ ollama run llama3.1:8b
 ```bash
 ollama run nomic-embed-text
 ```
-- [ ] Create basic FastAPI App
+- [x] Create basic FastAPI App
     - Example:
 ```python
 @app.get("/")
@@ -175,7 +175,7 @@ def root():
 **Goal**
 Talk to the local model
 
-- [ ] Install Ollama Python Client
+- [x] Install Ollama Python Client
     - Instalation:
 ```bash
 pip install ollama
@@ -318,3 +318,108 @@ This project can later evolve into:
 - engineering documentation assistant
 - AI operations dashboard
 - autonomous workflow system
+
+---
+
+## Installation Guide
+
+### Prerequisites
+
+Before installing PKA-AI, make sure you have:
+
+- Python 3.10+
+- Git
+- At least ~6GB RAM available (for local models via Ollama)
+- Windows / Linux / macOS
+
+---
+
+### 1. Clone the repository
+```bash
+git clone <your-repo-url>
+cd pka-ai
+```
+
+---
+
+### 2. Create a virtual environment
+**Windows**
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+**Linux / macOS**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+---
+
+### 3. Install Python dependencies
+```bash
+pip install -r requirements.txt
+```
+If `requirements.txt` is not yet generated, you can install manually:
+
+```bash
+pip install fastapi uvicorn ollama
+```
+
+Then regenerate:
+```bash
+pip freeze > requirements.txt
+```
+
+---
+
+### 4. Install Ollama
+
+Download and install Ollama:
+
+https://ollama.com
+
+Verify installation:
+```bash
+ollama --version
+```
+
+---
+
+### 5. Download required models
+**Main chat model**
+```bash
+ollama run llama3.1
+```
+This will automatically download the model on first run.
+
+**Embedding model**
+```bash
+ollama run nomic-embed-text
+```
+
+---
+
+### 6. Run the API server
+```bash
+uvicorn app.main:app --reload
+```
+Then open:
+
+http://localhost:8000
+http://localhost:8000/docs
+
+---
+
+### 7. Quick sanity check
+
+Test Ollama manually:
+```bash
+ollama run llama3.1
+```
+Then type:
+```
+Hello!
+```
