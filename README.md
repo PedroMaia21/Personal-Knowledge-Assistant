@@ -180,7 +180,7 @@ Talk to the local model
 ```bash
 pip install ollama
 ```
-- [ ] Create simple chat script
+- [x] Create simple chat script
     - CLI Example:
 ```
 You: summarize productivity systems
