@@ -2,10 +2,17 @@ import ollama
 
 MODEL = "llama3.1"
 
+SYSTEM_PROMPT = """
+You are a helpful assistant that provides information based on the user's queries. 
+Use the knowledge you have been trained on to answer questions and provide insights.
+Be concise, structured, actionable and informative in your responses. If you don't know the answer, it's okay to say so.
+"""
+
 def chat(prompt):
     response = ollama.chat(
         model=MODEL,
         messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ]
     )
