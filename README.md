@@ -104,7 +104,8 @@ Personal-Knowledge-Assistant/
 │   ├── query.py
 │   ├── prompts.py
 │   ├── chunking.py
-│   └── utils.py
+│   ├── utils.py
+|   └── loader.py
 │
 ├── data/
 │   ├── raw/
@@ -120,9 +121,9 @@ Personal-Knowledge-Assistant/
 
 ### Versions during development
 
-**Python**: 3.14.2
-**Pip**: 25.3
-**Ollama**: 0.24.0
+- **Python**: 3.14.2
+- **Pip**: 25.3
+- **Ollama**: 0.24.0
 ---
 
 ## Scope Definition
@@ -194,12 +195,12 @@ AI: ...
 **Goal**
 Load Files
 
-- [ ] Create Document Loader
-    - [ ] read `.txt`
-    - [ ] read `.md`
-    - [ ] iterate folder contents
-- [ ] Implement Text Chunking
-    - [ ] Split large text into chunks
+- [x] Create Document Loader
+    - [x] read `.txt`
+    - [x] read `.md`
+    - [x] iterate folder contents
+- [x] Implement Text Chunking
+    - [x] Split large text into chunks
     - Strategy:
         - 500–1000 characters
         - overlap of 100
