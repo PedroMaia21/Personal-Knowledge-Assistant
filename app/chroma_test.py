@@ -20,3 +20,7 @@ collection.add(
 )
 
 print("Documents added successfully!")
+
+results = collection.get()
+
+print(results)

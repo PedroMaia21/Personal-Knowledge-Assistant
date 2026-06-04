@@ -212,7 +212,7 @@ Load Files
 **Goal**
 Semantic Search
 
-- [ ] Install ChromaDB
+- [x] Install ChromaDB
 ```bash
 pip install chromadb
 ```
