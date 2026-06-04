@@ -1,0 +1,7 @@
+Productivity systems help people organize work.
+
+The Getting Things Done method was created by David Allen.
+
+Kanban focuses on visuzalizing workflow.
+
+Time blocking allocates fixed periods for tasks
