@@ -28,3 +28,11 @@ def generate_embeddings(chunks):
         )
     
     return results
+
+def get_embeddings(text: str):
+    import ollama
+    response = ollama.embeddings(
+        model="nomic-embed-text",
+        prompt=text
+    )
+    return response["embedding"]
