@@ -20,6 +20,7 @@ def store_chunks(chunks, embeddings, source):
             {
                 "source": source,
                 "chunk_index": i,
+                "chunk_length": len(chunk)
             }
         )
 
