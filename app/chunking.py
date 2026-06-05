@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from embeddings import generate_embeddings
+from app.embeddings import generate_embeddings
 
 def chunk_text(
     text: str,

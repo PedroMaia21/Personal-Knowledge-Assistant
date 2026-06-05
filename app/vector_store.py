@@ -8,6 +8,11 @@ def store_chunks(chunks, embeddings, source):
     ids = []
     metadatas = []
 
+    clean_embeddings = [
+        item["embedding"] 
+        for item in embeddings
+    ]
+
     for i, chunk in enumerate(chunks):
         ids.append(f"{source}_{i}")
 
@@ -21,6 +26,6 @@ def store_chunks(chunks, embeddings, source):
     collection.add(
         ids=ids,
         documents=chunks,
-        embeddings=embeddings,
+        embeddings=clean_embeddings,
         metadatas=metadatas
     )
