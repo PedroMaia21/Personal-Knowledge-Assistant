@@ -105,7 +105,9 @@ Personal-Knowledge-Assistant/
 │   ├── prompts.py
 │   ├── chunking.py
 │   ├── utils.py
-|   └── loader.py
+|   ├── loader.py
+|   ├── chat.py
+|   └── embeddings.py
 │
 ├── data/
 │   ├── raw/
@@ -212,17 +214,17 @@ Load Files
 **Goal**
 Semantic Search
 
-- [ ] Install ChromaDB
+- [x] Install ChromaDB
 ```bash
 pip install chromadb
 ```
-- [ ] Generate Embeddings
-    - [ ] Generate embeddings for chunks
+- [x] Generate Embeddings
+    - [x] Generate embeddings for chunks
 ```python
 nomic-embed-text
 ```
-- [ ] Store Embeddings in ChromaDB
-- [ ] Implement Semantic Search
+- [x] Store Embeddings in ChromaDB
+- [x] Implement Semantic Search
     - Input: `"What were the productivity review conclusions?"`
     - Outputs:
         - top relevant chunks
@@ -337,8 +339,8 @@ Before installing PKA-AI, make sure you have:
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd pka-ai
+git clone https://github.com/PedroMaia21/Personal-Knowledge-Assistant.git
+cd Personal-Knowledge-Assistant
 ```
 
 ---
@@ -362,16 +364,6 @@ source .venv/bin/activate
 ### 3. Install Python dependencies
 ```bash
 pip install -r requirements.txt
-```
-If `requirements.txt` is not yet generated, you can install manually:
-
-```bash
-pip install fastapi uvicorn ollama
-```
-
-Then regenerate:
-```bash
-pip freeze > requirements.txt
 ```
 
 ---
