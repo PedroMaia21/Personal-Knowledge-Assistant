@@ -13,7 +13,11 @@ def generate_embedding(text):
 def generate_embeddings(chunks):
     results = []
 
-    for chunk in chunks:
+    total = len(chunks)
+
+    for i, chunk in enumerate(chunks):
+        print(f"Generating embedding for chunk {i + 1} of {total}...")
+
         vector = generate_embedding(chunk)
         
         results.append(
