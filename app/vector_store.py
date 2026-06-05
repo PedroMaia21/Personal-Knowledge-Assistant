@@ -29,3 +29,6 @@ def store_chunks(chunks, embeddings, source):
         embeddings=clean_embeddings,
         metadatas=metadatas
     )
+
+def count_documents():
+    return collection.count()
