@@ -224,7 +224,7 @@ pip install chromadb
 nomic-embed-text
 ```
 - [x] Store Embeddings in ChromaDB
-- [ ] Implement Semantic Search
+- [x] Implement Semantic Search
     - Input: `"What were the productivity review conclusions?"`
     - Outputs:
         - top relevant chunks
