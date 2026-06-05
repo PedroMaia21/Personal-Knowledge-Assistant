@@ -1,6 +1,6 @@
-from embeddings import generate_embeddings
+from embeddings import generate_embedding
 
-vector = generate_embeddings(
+vector = generate_embedding(
     "Portugal is located in Europe"
 )
 
