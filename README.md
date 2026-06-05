@@ -218,8 +218,8 @@ Semantic Search
 ```bash
 pip install chromadb
 ```
-- [ ] Generate Embeddings
-    - [ ] Generate embeddings for chunks
+- [x] Generate Embeddings
+    - [x] Generate embeddings for chunks
 ```python
 nomic-embed-text
 ```
