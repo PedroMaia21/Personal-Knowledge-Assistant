@@ -1,5 +1,4 @@
 from chromadb import PersistentClient
-import json
 
 def get_embedding(text: str):
     import ollama
@@ -32,34 +31,4 @@ def semantic_search(query: str, top_k: int = 5):
             "distance": results["distances"][0][i],
         })
 
-    print(results.keys())
-    log_retrieval(query, results)
-
     return chunks
-
-def log_retrieval(query: str, results: dict):
-    ids = results.get("ids", [[]])[0]
-    metadatas = results.get("metadatas", [[]])[0]
-    distances = results.get("distances", [[]])[0]
-    
-    retrieval_log = {
-        "query": query,
-        "results": []
-    }
-
-    for rank, (chunk_id, metadata, distance) in enumerate(zip(ids, metadatas, distances), start=1):
-        retrieval_log["results"].append({
-            "rank": rank,
-            "chunk_id": chunk_id,
-            "distance": distance,
-            "source": metadata.get("source") if metadata else "Unknown"
-        })
-
-    print(
-        json.dumps(
-            retrieval_log,
-            indent=2
-        )
-    )
-
-    return
