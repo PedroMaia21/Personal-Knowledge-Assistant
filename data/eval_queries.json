@@ -1,0 +1,98 @@
+[
+    {
+        "query": "What are vector databases used for?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "How do embeddings represent text?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "How are embeddings stored for semantic search?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "What stores embeddings?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "How do AI systems identify patterns?",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "Where are vectors persisted?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "Artificial Intelligence is transforming many industries.",
+        "expected_chunk_id": "test_document_0"
+    },
+    {
+        "query": "What is transforming many industries?",
+        "expected_chunk_id": "test_document_0"
+    },
+    {
+        "query": "How is AI changing different sectors?",
+        "expected_chunk_id": "test_document_0"
+    },
+    {
+        "query": "In what ways is artificial intelligence reshaping various fields?",
+        "expected_chunk_id": "test_document_0"
+    },
+    {
+        "query": "Which technology is having a major impact across business and society?",
+        "expected_chunk_id": "test_document_0"
+    },
+    {
+        "query": "What innovations are disrupting traditional industries today?",
+        "expected_chunk_id": "test_document_0"
+    },
+    {
+        "query": "Machine Learning enables systems to learn patterns.",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "What enables systems to learn patterns?",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "How do machines acquire the ability to recognize patterns?",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "What technology allows software to learn from data?",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "How do models improve their predictions over time?",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "What approach lets computers detect regularities without explicit programming?",
+        "expected_chunk_id": "test_document_1"
+    },
+    {
+        "query": "Vector databases store embeddings efficiently.",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "What stores embeddings efficiently?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "How are vector embeddings kept in an optimized way?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "What kind of database is optimized for storing vector representations?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "What infrastructure supports fast similarity search over high-dimensional data?",
+        "expected_chunk_id": "test_document_2"
+    },
+    {
+        "query": "Where would you persist numerical representations for a retrieval system?",
+        "expected_chunk_id": "test_document_2"
+    }
+]

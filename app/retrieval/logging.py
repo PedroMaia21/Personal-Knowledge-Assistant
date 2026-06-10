@@ -14,7 +14,8 @@ def log_retrieval(query: str, chunks: list):
             "rank": rank,
             "distance": chunk.get("distance"),
             "source": source,
-            "chunk_text": chunk.get("text")
+            "chunk_text": chunk.get("text"),
+            "chunk_id": chunk.get("id")
         })
 
     print(
