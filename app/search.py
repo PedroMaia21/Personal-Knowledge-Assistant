@@ -21,7 +21,7 @@ def semantic_search(query: str, top_k: int = 5):
         n_results=top_k,
         include=["documents", "metadatas", "distances"]
     )
-    print(results.keys())
+
     # 3 Format results
     chunks = []
     for i in range(len(results["documents"][0])):
