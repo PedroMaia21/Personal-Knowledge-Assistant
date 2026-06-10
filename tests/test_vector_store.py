@@ -10,7 +10,7 @@ Machine Learning enables systems to learn patterns.
 Vector databases store embeddings efficiently.
 """
 
-chunks = chunk_text(text)
+chunks = chunk_text(text, 60, 6)
 
 embeddings = generate_embeddings(chunks)
 
