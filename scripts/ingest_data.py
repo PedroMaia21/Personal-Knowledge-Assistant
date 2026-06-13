@@ -10,7 +10,7 @@ from vectorstore.chroma_store import store_chunks, count_documents
 
 def run_ingestion():
     print("🔄 Crawling for raw documents...")
-    docs = load_folder("./data")
+    docs = load_folder("./data/raw")
     
     for doc in docs:
         print(f"Processing structural elements for: {doc['path']}")

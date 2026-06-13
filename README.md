@@ -128,7 +128,8 @@ Personal-Knowledge-Assistant/
 │   ├── raw/
 │   │   └── notes.md
 │   └── evaluation/
-|       └── eval_queries.json
+|       ├── eval_queries.json
+│       └── distance_findings.md
 │
 ├── scripts/
 │   ├── chat_cli.py
@@ -136,6 +137,7 @@ Personal-Knowledge-Assistant/
 │   ├── evaluate_retrieval.py
 │   ├── ingest_data.py
 │   ├── inspect_retrieval.py
+│   ├── investigate_distances.py
 │   └── main.py
 │
 ├── tests/

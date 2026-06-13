@@ -1,8 +1,13 @@
 import chromadb
-from typing import List, Dict, Any
+from typing import List
 
 client = chromadb.PersistentClient(path="./chroma_db")
-collection = client.get_or_create_collection(name="knowledge_base")
+
+collection = client.get_or_create_collection(
+    name="knowledge_base",
+    metadata={"hnsw:space": "cosine"},
+)
+
 
 def store_chunks(chunks: List[str], embeddings: List[List[float]], source: str):
     """Saves vectorized text strings with custom context tracking metadata."""
@@ -19,15 +24,16 @@ def store_chunks(chunks: List[str], embeddings: List[List[float]], source: str):
         metadatas.append({
             "source": source,
             "chunk_index": i,
-            "chunk_length": len(chunk)
+            "chunk_length": len(chunk),
         })
 
     collection.add(
         ids=ids,
         documents=chunks,
         embeddings=embeddings,
-        metadatas=metadatas
+        metadatas=metadatas,
     )
+
 
 def count_documents() -> int:
     return collection.count()
