@@ -1,5 +1,5 @@
-from app.search import semantic_search
-from app.retrieval.logging import log_retrieval
+from src.retrieval.search import semantic_search
+from src.utils.logging import log_retrieval
 
 query = input("Query: ")
 

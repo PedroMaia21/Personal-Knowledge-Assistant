@@ -13,6 +13,7 @@ def log_retrieval(query: str, chunks: list):
         retrieval_log["results"].append({
             "rank": rank,
             "distance": chunk.get("distance"),
+            "similarity": chunk.get("similarity_score"),
             "source": source,
             "chunk_text": chunk.get("text"),
             "chunk_id": chunk.get("id")
