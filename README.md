@@ -1,5 +1,12 @@
 # Personal-Knowledge-Assistant
 
+## Project Overview
+PKA-AI is a personal knowledge assistant that ingest documents,
+creates embeddings, stores them in a vector database,
+and retrieves relevant context for LLM-based question answering.
+
+---
+
 ## Project Goal
 
 Build a small local AI assistant that can:
@@ -81,13 +88,13 @@ Embeddings
    ↓
 ChromaDB
    ↓
-User Question
+User Question (In progress)
    ↓
 Semantic Search
    ↓
 Relevant Chunks
    ↓
-LLM Prompt
+LLM Prompt (Yet to be developed)
    ↓
 Answer
 ```
@@ -294,6 +301,16 @@ Later
         - Achievments
         - Blockers
         - Priorities
+
+---
+
+## Current Features
+
+- Document ingestion
+- Chunking
+- Embedding generation
+- Vector storage
+- Semantic retrieval 
 
 ---
 
