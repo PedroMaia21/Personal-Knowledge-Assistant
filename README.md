@@ -105,22 +105,48 @@ Answer
 ```
 Personal-Knowledge-Assistant/
 │
-├── app/
-│   ├── main.py
-│   ├── ingest.py
-│   ├── query.py
-│   ├── prompts.py
-│   ├── chunking.py
-│   ├── utils.py
-|   ├── loader.py
-|   ├── chat.py
-|   └── embeddings.py
+├── src/
+│   ├── config/
+│   │   ├── config.py
+│   │   └── prompts.py
+│   ├── ingestion/
+│   │   ├── chunking.py
+│   │   └── loader.py
+│   ├── models/
+│   │   ├── embedding.py
+│   │   └── llm.py
+│   ├── retrieval/
+│   │   ├── query.py
+│   │   └── search.py
+│   ├── utils/
+│   │   ├── helpers.py
+│   │   └── logging.py
+|   └── vectorstore/
+│       └── chroma_store.py
 │
 ├── data/
 │   ├── raw/
-│   └── chroma/
+│   │   └── notes.md
+│   └── evaluation/
+|       └── eval_queries.json
+│
+├── scripts/
+│   ├── chat_cli.py
+│   ├── embedding_distance_analysis.py
+│   ├── evaluate_retrieval.py
+│   ├── ingest_data.py
+│   ├── inspect_retrieval.py
+│   └── main.py
+│
+├── tests/
+│   ├── integration/
+│   │   └── test_semantic_search-py
+│   └── unit/
+│       ├── test_embeddings.py
+│       └── test_vector_store.py
 │
 ├── requirements.txt
+├── project_mvp.md
 ├── README.md
 ├── .gitignore
 └── .env
