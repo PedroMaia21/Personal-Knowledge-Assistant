@@ -108,7 +108,8 @@ Personal-Knowledge-Assistant/
 ├── src/
 │   ├── config/
 │   │   ├── config.py
-│   │   └── prompts.py
+│   │   ├── prompts.py
+│   │   └── config_chunking.py
 │   ├── ingestion/
 │   │   ├── chunking.py
 │   │   └── loader.py
