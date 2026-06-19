@@ -108,7 +108,8 @@ Personal-Knowledge-Assistant/
 ├── src/
 │   ├── config/
 │   │   ├── config.py
-│   │   └── prompts.py
+│   │   ├── prompts.py
+│   │   └── config_chunking.py
 │   ├── ingestion/
 │   │   ├── chunking.py
 │   │   └── loader.py
@@ -129,7 +130,8 @@ Personal-Knowledge-Assistant/
 │   │   └── notes.md
 │   └── evaluation/
 |       ├── eval_queries.json
-│       └── distance_findings.md
+│       ├── distance_findings.md
+│       └── chunking_v1_eval_report.md
 │
 ├── scripts/
 │   ├── chat_cli.py
