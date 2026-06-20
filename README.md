@@ -1,5 +1,12 @@
 # Personal-Knowledge-Assistant
 
+## Project Overview
+PKA-AI is a personal knowledge assistant that ingest documents,
+creates embeddings, stores them in a vector database,
+and retrieves relevant context for LLM-based question answering.
+
+---
+
 ## Project Goal
 
 Build a small local AI assistant that can:
@@ -81,13 +88,13 @@ Embeddings
    ↓
 ChromaDB
    ↓
-User Question
+User Question (In progress)
    ↓
 Semantic Search
    ↓
 Relevant Chunks
    ↓
-LLM Prompt
+LLM Prompt (Yet to be developed)
    ↓
 Answer
 ```
@@ -98,22 +105,52 @@ Answer
 ```
 Personal-Knowledge-Assistant/
 │
-├── app/
-│   ├── main.py
-│   ├── ingest.py
-│   ├── query.py
-│   ├── prompts.py
-│   ├── chunking.py
-│   ├── utils.py
-|   ├── loader.py
-|   ├── chat.py
-|   └── embeddings.py
+├── src/
+│   ├── config/
+│   │   ├── config.py
+│   │   ├── prompts.py
+│   │   └── config_chunking.py
+│   ├── ingestion/
+│   │   ├── chunking.py
+│   │   └── loader.py
+│   ├── models/
+│   │   ├── embedding.py
+│   │   └── llm.py
+│   ├── retrieval/
+│   │   ├── query.py
+│   │   └── search.py
+│   ├── utils/
+│   │   ├── helpers.py
+│   │   └── logging.py
+|   └── vectorstore/
+│       └── chroma_store.py
 │
 ├── data/
 │   ├── raw/
-│   └── chroma/
+│   │   └── notes.md
+│   └── evaluation/
+|       ├── eval_queries.json
+│       ├── distance_findings.md
+│       └── chunking_v1_eval_report.md
+│
+├── scripts/
+│   ├── chat_cli.py
+│   ├── embedding_distance_analysis.py
+│   ├── evaluate_retrieval.py
+│   ├── ingest_data.py
+│   ├── inspect_retrieval.py
+│   ├── investigate_distances.py
+│   └── main.py
+│
+├── tests/
+│   ├── integration/
+│   │   └── test_semantic_search-py
+│   └── unit/
+│       ├── test_embeddings.py
+│       └── test_vector_store.py
 │
 ├── requirements.txt
+├── project_mvp.md
 ├── README.md
 ├── .gitignore
 └── .env
@@ -294,6 +331,16 @@ Later
         - Achievments
         - Blockers
         - Priorities
+
+---
+
+## Current Features
+
+- Document ingestion
+- Chunking
+- Embedding generation
+- Vector storage
+- Semantic retrieval 
 
 ---
 
