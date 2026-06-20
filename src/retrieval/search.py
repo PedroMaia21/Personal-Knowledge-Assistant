@@ -1,11 +1,12 @@
 from chromadb import PersistentClient
 
 from src.utils.helpers import normalize_similarity
+from src.config.config import DEFAULT_TOP_K, CHROMA_DB_PATH, CHROMA_COLLECTION_NAME, EMBEDDING_MODEL
 
-client = PersistentClient(path="./chroma_db")
+client = PersistentClient(path=CHROMA_DB_PATH)
 
 collection = client.get_or_create_collection(
-    name="knowledge_base",
+    name=CHROMA_COLLECTION_NAME,
     metadata={"hnsw:space": "cosine"},
 )
 
@@ -13,13 +14,13 @@ collection = client.get_or_create_collection(
 def get_embedding(text: str):
     import ollama
     response = ollama.embeddings(
-        model="nomic-embed-text",
+        model=EMBEDDING_MODEL,
         prompt=text,
     )
     return response["embedding"]
 
 
-def semantic_search(query: str, top_k: int = 5):
+def semantic_search(query: str, top_k: int = DEFAULT_TOP_K):
     # 1. Embed the query
     query_embedding = get_embedding(query)
 

@@ -1,10 +1,11 @@
 import logging
 from typing import List, Dict, Any
+from src.config.config import EMBEDDING_MODEL
 import ollama
 
 logger = logging.getLogger(__name__)
 
-MODEL = "nomic-embed-text"
+MODEL = EMBEDDING_MODEL
 
 def generate_embedding(text: str) -> List[float]:
     """Generates a standalone vector representation for a single text chunk."""
