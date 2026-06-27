@@ -1,10 +1,11 @@
 import chromadb
 from typing import Any, Dict, List
+from src.config.config import CHROMA_DB_PATH, CHROMA_COLLECTION_NAME
 
-client = chromadb.PersistentClient(path="./chroma_db")
+client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 
 collection = client.get_or_create_collection(
-    name="knowledge_base",
+    name=CHROMA_COLLECTION_NAME,
     metadata={"hnsw:space": "cosine"},
 )
 
