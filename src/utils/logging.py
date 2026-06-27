@@ -1,29 +1,108 @@
+"""
+logging.py — Retrieval observability for PKA-AI.
+
+log_retrieval()      : human-readable display (default, easy to scan)
+log_retrieval_json() : full JSON dump (machine-readable, for debugging/tests)
+"""
+
 import json
 
-def log_retrieval(query: str, chunks: list):    
-    retrieval_log = {
+
+def log_retrieval(query: str, chunks: list) -> None:
+    """
+    Prints a compact, human-readable retrieval summary.
+
+    Output format:
+        ══════════════════════════════════════════
+        Query: What is a ChromaDB collection?
+        ══════════════════════════════════════════
+
+        #1  notes.md  (chunk 3)
+            Distance: 0.462  │  Similarity: 0.538
+            ──────────────────────────────────────
+            A collection is the core organisational unit in ChromaDB...
+
+        #2  ...
+
+    Args:
+        query  : The user's question (logged at the top).
+        chunks : List of chunk dicts as returned by semantic_search_reranked().
+                 Each dict is expected to have: text, metadata, distance,
+                 similarity_score, and optionally id / rerank_scores.
+    """
+    divider = "═" * 50
+    thin    = "─" * 50
+
+    print(f"\n{divider}")
+    print(f"Query: {query}")
+    print(divider)
+
+    if not chunks:
+        print("  (no chunks retrieved)\n")
+        return
+
+    for rank, chunk in enumerate(chunks, start=1):
+        metadata   = chunk.get("metadata") or {}
+        source     = metadata.get("source", "unknown")
+        chunk_idx  = metadata.get("chunk_index", "?")
+        distance   = chunk.get("distance")
+        similarity = chunk.get("similarity_score")
+        chunk_id   = chunk.get("id", "")
+
+        # ── header line ───────────────────────────────────────────────────────
+        print(f"\n#{rank}  {source}  (chunk {chunk_idx})")
+        if chunk_id:
+            print(f"    id: {chunk_id}")
+
+        # ── scores ────────────────────────────────────────────────────────────
+        score_parts = []
+        if distance is not None:
+            score_parts.append(f"Distance: {distance:.3f}")
+        if similarity is not None:
+            score_parts.append(f"Similarity: {similarity:.3f}")
+
+        rerank = chunk.get("rerank_scores") or {}
+        if rerank.get("final_score") is not None:
+            score_parts.append(f"Rerank: {rerank['final_score']:.3f}")
+
+        if score_parts:
+            print("    " + "  │  ".join(score_parts))
+
+        # ── text preview ──────────────────────────────────────────────────────
+        print(f"    {thin}")
+        text = (chunk.get("text") or "").strip()
+        # Show first 300 chars so the log stays scannable
+        preview = text[:300] + ("…" if len(text) > 300 else "")
+        # Indent each line for visual grouping
+        for line in preview.splitlines():
+            print(f"    {line}")
+
+    print(f"\n{divider}\n")
+
+
+def log_retrieval_json(query: str, chunks: list) -> None:
+    """
+    Prints the full retrieval result as indented JSON.
+
+    Useful for tests, CI output, or copy-pasting into analysis tools.
+    Preserves every field returned by semantic_search_reranked().
+    """
+    payload = {
         "query": query,
-        "results": []
+        "results": [],
     }
 
     for rank, chunk in enumerate(chunks, start=1):
-        metadata = chunk.get("metadata", {})
-        source = metadata.get("source") if metadata else "Unknown"
-
-        retrieval_log["results"].append({
-            "rank": rank,
-            "distance": chunk.get("distance"),
-            "similarity": chunk.get("similarity_score"),
-            "source": source,
-            "chunk_text": chunk.get("text"),
-            "chunk_id": chunk.get("id")
+        metadata = chunk.get("metadata") or {}
+        payload["results"].append({
+            "rank":        rank,
+            "id":          chunk.get("id"),
+            "source":      metadata.get("source", "unknown"),
+            "chunk_index": metadata.get("chunk_index"),
+            "distance":    chunk.get("distance"),
+            "similarity":  chunk.get("similarity_score"),
+            "rerank":      chunk.get("rerank_scores"),
+            "chunk_text":  chunk.get("text"),
         })
 
-    print(
-        json.dumps(
-            retrieval_log,
-            indent=2
-        )
-    )
-
-    return
+    print(json.dumps(payload, indent=2))
