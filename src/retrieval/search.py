@@ -1,6 +1,7 @@
 from chromadb import PersistentClient
 
 from src.utils.helpers import normalize_similarity
+from src.utils.reranker import rerank
 from src.config.config import DEFAULT_TOP_K, CHROMA_DB_PATH, CHROMA_COLLECTION_NAME, EMBEDDING_MODEL
 
 client = PersistentClient(path=CHROMA_DB_PATH)
@@ -21,6 +22,10 @@ def get_embedding(text: str):
 
 
 def semantic_search(query: str, top_k: int = DEFAULT_TOP_K):
+    """
+    Pure vector search. Returns chunks sorted by cosine distance only.
+    Use semantic_search_reranked() for the heuristic-boosted version.
+    """
     # 1. Embed the query
     query_embedding = get_embedding(query)
 
@@ -44,3 +49,24 @@ def semantic_search(query: str, top_k: int = DEFAULT_TOP_K):
         })
 
     return chunks
+
+def semantic_search_reranked(query: str, top_k: int = DEFAULT_TOP_K):
+    """
+    Vector search followed by heuristic reranking.
+ 
+    Retrieves top_k chunks by cosine distance, then re-sorts them using
+    three lightweight signals (distance score, size penalty, continuity bonus).
+ 
+    Each returned chunk contains a "rerank_scores" key with the full breakdown:
+        {
+            "distance_score":   float,
+            "size_bonus":       float,
+            "continuity_bonus": float,
+            "final_score":      float,
+        }
+ 
+    Use reranker.format_rerank_debug(chunk) to print the breakdown for a chunk.
+    """
+    chunks = semantic_search(query, top_k=top_k)
+    return rerank(chunks)
+ 

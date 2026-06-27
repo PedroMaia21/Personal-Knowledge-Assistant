@@ -1,9 +1,9 @@
 import pytest
-from retrieval.query import semantic_search, query_with_context
+from src.retrieval.query import semantic_search_reranked, query_with_context
 
 def test_semantic_search_execution():
     query = "How do vector databases store data?"
-    results = semantic_search(query, top_k=2)
+    results = semantic_search_reranked(query, top_k=2)
     
     assert isinstance(results, list)
     if len(results) > 0:
