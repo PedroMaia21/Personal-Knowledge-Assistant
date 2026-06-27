@@ -106,6 +106,9 @@ Answer
 Personal-Knowledge-Assistant/
 │
 ├── src/
+|   ├── assistant/
+│   │   ├── adapters.py
+│   │   └── rag_assistant.py
 │   ├── config/
 │   │   ├── config.py
 │   │   ├── prompts.py
@@ -140,7 +143,8 @@ Personal-Knowledge-Assistant/
 │   ├── ingest_data.py
 │   ├── inspect_retrieval.py
 │   ├── investigate_distances.py
-│   └── main.py
+│   ├── main.py
+│   └── rag_assistant_ask.py
 │
 ├── tests/
 │   ├── integration/
@@ -274,7 +278,7 @@ nomic-embed-text
 **Goal**
 Combine retrieval + Generation
 
-- [ ] Create Retrieval Prompt
+- [x] Create Retrieval Prompt
 **Prompt Structure:**
 ```
 Use ONLY the provided context.
@@ -285,7 +289,7 @@ Context:
 Question:
 ...
 ```
-- [ ] Implement RAG pipeline
+- [x] Implement RAG pipeline
 **Flow:**
 ```
 Question
