@@ -1,6 +1,7 @@
 import ollama
+from src.config.config import CHAT_MODEL
 
-MODEL = "llama3.1"
+MODEL = CHAT_MODEL
 SYSTEM_PROMPT = """You are a helpful personal knowledge assistant. 
 Use the provided knowledge base context elements to resolve user queries concisely and transparently."""
 
