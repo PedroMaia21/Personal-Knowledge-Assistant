@@ -1,98 +1,122 @@
 [
-    {
-        "query": "What are vector databases used for?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "How do embeddings represent text?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "How are embeddings stored for semantic search?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "What stores embeddings?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "How do AI systems identify patterns?",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "Where are vectors persisted?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "Artificial Intelligence is transforming many industries.",
-        "expected_chunk_id": "test_document_0"
-    },
-    {
-        "query": "What is transforming many industries?",
-        "expected_chunk_id": "test_document_0"
-    },
-    {
-        "query": "How is AI changing different sectors?",
-        "expected_chunk_id": "test_document_0"
-    },
-    {
-        "query": "In what ways is artificial intelligence reshaping various fields?",
-        "expected_chunk_id": "test_document_0"
-    },
-    {
-        "query": "Which technology is having a major impact across business and society?",
-        "expected_chunk_id": "test_document_0"
-    },
-    {
-        "query": "What innovations are disrupting traditional industries today?",
-        "expected_chunk_id": "test_document_0"
-    },
-    {
-        "query": "Machine Learning enables systems to learn patterns.",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "What enables systems to learn patterns?",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "How do machines acquire the ability to recognize patterns?",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "What technology allows software to learn from data?",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "How do models improve their predictions over time?",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "What approach lets computers detect regularities without explicit programming?",
-        "expected_chunk_id": "test_document_1"
-    },
-    {
-        "query": "Vector databases store embeddings efficiently.",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "What stores embeddings efficiently?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "How are vector embeddings kept in an optimized way?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "What kind of database is optimized for storing vector representations?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "What infrastructure supports fast similarity search over high-dimensional data?",
-        "expected_chunk_id": "test_document_2"
-    },
-    {
-        "query": "Where would you persist numerical representations for a retrieval system?",
-        "expected_chunk_id": "test_document_2"
-    }
+  {
+    "id": "q01",
+    "query": "What is chunking?",
+    "expected_source": "chunking_v1.md",
+    "notes": "V1 baseline parameters and algorithm"
+  },
+  {
+    "id": "q02",
+    "query": "What improvements are planned for ChunkerV2?",
+    "expected_source": "chunking_v2.md",
+    "notes": "Sentence-boundary awareness, code block protection, adaptive overlap"
+  },
+  {
+    "id": "q03",
+    "query": "What went wrong with chunk boundaries in the evaluation?",
+    "expected_source": "chunking_v1_eval_report.md",
+    "notes": "81% bad starts, 75% bad ends"
+  },
+  {
+    "id": "q04",
+    "query": "What are embeddings and how are they generated?",
+    "expected_source": "embedding.py",
+    "notes": "generate_embedding() and generate_embeddings()"
+  },
+  {
+    "id": "q05",
+    "query": "How do I store chunks in ChromaDB?",
+    "expected_source": "chroma_store.py",
+    "notes": "store_chunks() function"
+  },
+  {
+    "id": "q06",
+    "query": "What distance metric does the vector store use?",
+    "expected_source": "chroma_store.py",
+    "notes": "hnsw:space = cosine in collection metadata"
+  },
+  {
+    "id": "q07",
+    "query": "How is the RAG prompt assembled?",
+    "expected_source": "prompts.py",
+    "notes": "build_rag_prompt() and format_context_block()"
+  },
+  {
+    "id": "q08",
+    "query": "What is the system prompt for the assistant?",
+    "expected_source": "prompts.py",
+    "notes": "SYSTEM_PROMPT constant — answer only from context"
+  },
+  {
+    "id": "q09",
+    "query": "What chat and embedding models are configured?",
+    "expected_source": "config.py",
+    "notes": "CHAT_MODEL = llama3.1, EMBEDDING_MODEL = nomic-embed-text"
+  },
+  {
+    "id": "q10",
+    "query": "What is the default number of chunks retrieved per query?",
+    "expected_source": "config.py",
+    "notes": "DEFAULT_TOP_K = 5"
+  },
+  {
+    "id": "q11",
+    "query": "How does the reranker compute its final score?",
+    "expected_source": "reranker.py",
+    "notes": "distance_score + size_bonus + continuity_bonus"
+  },
+  {
+    "id": "q12",
+    "query": "What is the continuity bonus and when does it apply?",
+    "expected_source": "reranker.py",
+    "notes": "+0.15 per adjacent chunk from same source already in result set"
+  },
+  {
+    "id": "q13",
+    "query": "How are cosine distances converted to similarity scores?",
+    "expected_source": "helpers.py",
+    "notes": "normalize_similarity() — max(0, min(1, 1 - distance))"
+  },
+  {
+    "id": "q14",
+    "query": "What file formats does the document loader support?",
+    "expected_source": "loader.py",
+    "notes": "SUPPORTED_EXTENSIONS = ['.txt', '.md']"
+  },
+  {
+    "id": "q15",
+    "query": "How does the RAG pipeline work end to end?",
+    "expected_source": "rag_assistant.py",
+    "notes": "RAGAssistant.ask(): retrieve → build context → build prompt → generate"
+  },
+  {
+    "id": "q16",
+    "query": "What are the MVP success criteria?",
+    "expected_source": "project_mvp.md",
+    "notes": "Add doc in <5 min, retrieve consistently, grounded answers, weekly use"
+  },
+  {
+    "id": "q17",
+    "query": "What features are postponed after the MVP?",
+    "expected_source": "project_mvp.md",
+    "notes": "Web UI, conversation memory, hybrid search, agents, multiple KBs"
+  },
+  {
+    "id": "q18",
+    "query": "What metadata does each chunk include?",
+    "expected_source": "chunking.py",
+    "notes": "source, chunk_index, chunk_length, chunker_version"
+  },
+  {
+    "id": "q19",
+    "query": "How does semantic search query ChromaDB?",
+    "expected_source": "search.py",
+    "notes": "semantic_search() embeds query then calls collection.query()"
+  },
+  {
+    "id": "q20",
+    "query": "How does the query pipeline wire retrieval to generation?",
+    "expected_source": "query.py",
+    "notes": "answer_question(): retrieve → log → build prompt → generate"
+  }
 ]
