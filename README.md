@@ -124,7 +124,8 @@ Personal-Knowledge-Assistant/
 │   │   └── search.py
 │   ├── utils/
 │   │   ├── helpers.py
-│   │   └── logging.py
+│   │   ├── logging.py
+│   │   └── reranker.py
 |   └── vectorstore/
 │       └── chroma_store.py
 │

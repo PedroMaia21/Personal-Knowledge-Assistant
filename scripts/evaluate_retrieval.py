@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from retrieval.query import semantic_search
+from src.retrieval.search import semantic_search_reranked
 
 logging.basicConfig(level=logging.INFO)
 
@@ -22,7 +22,7 @@ def run_evaluation():
         query = test_case["query"]
         expected = test_case["expected_chunk_id"]
 
-        chunks = semantic_search(query, top_k=3)
+        chunks = semantic_search_reranked(query, top_k=3)
         
         if chunks:
             # Check if expected chunk is within top result position

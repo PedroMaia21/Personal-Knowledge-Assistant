@@ -15,7 +15,7 @@ from pathlib import Path
 # Allow imports from src/
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from retrieval.search import semantic_search
+from src.retrieval.search import semantic_search_reranked
 
 # ------------------------------------------------------------------
 # 25 diverse queries covering different relevance levels:
@@ -68,7 +68,7 @@ def run_investigation():
 
     for query in QUERIES:
         try:
-            results = semantic_search(query, top_k=TOP_K)
+            results = semantic_search_reranked(query, top_k=TOP_K)
         except Exception as e:
             print(f"[SKIP] '{query}' — error: {e}")
             continue

@@ -1,12 +1,12 @@
 # src/assistant/adapters.py
 
-from src.retrieval.search import semantic_search
+from src.retrieval.search import semantic_search_reranked
 from src.config.prompts import build_rag_prompt, SYSTEM_PROMPT
 from src.models.llm import generate_chat_response
 
 class SearchRetriever:
     def retrieve(self, question, k):
-        return semantic_search(question, top_k=k)
+        return semantic_search_reranked(question, top_k=k)
 
 class PromptBuilder:
     def build(self, context, question):
