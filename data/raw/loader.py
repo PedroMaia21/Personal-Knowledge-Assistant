@@ -5,7 +5,7 @@ from typing import Dict, List
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-SUPPORTED_EXTENSIONS = ['.txt', '.md', '.py']
+SUPPORTED_EXTENSIONS = ['.txt', '.md']
 
 def load_file(file_path: Path) -> str:
     """Reads content from a single text file cleanly."""
