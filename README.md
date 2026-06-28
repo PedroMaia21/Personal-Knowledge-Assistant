@@ -304,7 +304,7 @@ Question
 
 ### Phase 6 - Quality Improvements
 
-- [ ] Add source references
+- [x] Add source references
     - Example: `Source: weekly_review_may.txt`
 - [ ] Add converation memory
     - Store:
