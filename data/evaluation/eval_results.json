@@ -1,0 +1,206 @@
+{
+  "date": "2026-06-28",
+  "top_k": 5,
+  "results": [
+    {
+      "id": "q01",
+      "query": "What is chunking?",
+      "expected_source": "chunking_v1.md",
+      "actual_top1": "data\\raw\\chunking.py",
+      "correct_at_1": false,
+      "hit_in_topk": true,
+      "top1_distance": 0.2944,
+      "notes": "V1 baseline parameters and algorithm"
+    },
+    {
+      "id": "q02",
+      "query": "What improvements are planned for ChunkerV2?",
+      "expected_source": "chunking_v2.md",
+      "actual_top1": "data\\raw\\chunking_v2.md",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.2863,
+      "notes": "Sentence-boundary awareness, code block protection, adaptive overlap"
+    },
+    {
+      "id": "q03",
+      "query": "What went wrong with chunk boundaries in the evaluation?",
+      "expected_source": "chunking_v1_eval_report.md",
+      "actual_top1": "data\\raw\\chunking_v1_eval_report.md",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.2757,
+      "notes": "81% bad starts, 75% bad ends"
+    },
+    {
+      "id": "q04",
+      "query": "What are embeddings and how are they generated?",
+      "expected_source": "embedding.py",
+      "actual_top1": "data\\raw\\embedding.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3214,
+      "notes": "generate_embedding() and generate_embeddings()"
+    },
+    {
+      "id": "q05",
+      "query": "How do I store chunks in ChromaDB?",
+      "expected_source": "chroma_store.py",
+      "actual_top1": "data\\raw\\chunking_v1_eval_report.md",
+      "correct_at_1": false,
+      "hit_in_topk": true,
+      "top1_distance": 0.3538,
+      "notes": "store_chunks() function"
+    },
+    {
+      "id": "q06",
+      "query": "What distance metric does the vector store use?",
+      "expected_source": "chroma_store.py",
+      "actual_top1": "data\\raw\\notes.md",
+      "correct_at_1": false,
+      "hit_in_topk": false,
+      "top1_distance": 0.3331,
+      "notes": "hnsw:space = cosine in collection metadata"
+    },
+    {
+      "id": "q07",
+      "query": "How is the RAG prompt assembled?",
+      "expected_source": "prompts.py",
+      "actual_top1": "data\\raw\\rag_assistant.py",
+      "correct_at_1": false,
+      "hit_in_topk": true,
+      "top1_distance": 0.4207,
+      "notes": "build_rag_prompt() and format_context_block()"
+    },
+    {
+      "id": "q08",
+      "query": "What is the system prompt for the assistant?",
+      "expected_source": "prompts.py",
+      "actual_top1": "data\\raw\\prompts.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3914,
+      "notes": "SYSTEM_PROMPT constant \u2014 answer only from context"
+    },
+    {
+      "id": "q09",
+      "query": "What chat and embedding models are configured?",
+      "expected_source": "config.py",
+      "actual_top1": "data\\raw\\llm.py",
+      "correct_at_1": false,
+      "hit_in_topk": false,
+      "top1_distance": 0.3537,
+      "notes": "CHAT_MODEL = llama3.1, EMBEDDING_MODEL = nomic-embed-text"
+    },
+    {
+      "id": "q10",
+      "query": "What is the default number of chunks retrieved per query?",
+      "expected_source": "config.py",
+      "actual_top1": "data\\raw\\chunking_v2.md",
+      "correct_at_1": false,
+      "hit_in_topk": false,
+      "top1_distance": 0.3168,
+      "notes": "DEFAULT_TOP_K = 5"
+    },
+    {
+      "id": "q11",
+      "query": "How does the reranker compute its final score?",
+      "expected_source": "reranker.py",
+      "actual_top1": "data\\raw\\reranker.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3501,
+      "notes": "distance_score + size_bonus + continuity_bonus"
+    },
+    {
+      "id": "q12",
+      "query": "What is the continuity bonus and when does it apply?",
+      "expected_source": "reranker.py",
+      "actual_top1": "data\\raw\\reranker.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3058,
+      "notes": "+0.15 per adjacent chunk from same source already in result set"
+    },
+    {
+      "id": "q13",
+      "query": "How are cosine distances converted to similarity scores?",
+      "expected_source": "helpers.py",
+      "actual_top1": "data\\raw\\helpers.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.2337,
+      "notes": "normalize_similarity() \u2014 max(0, min(1, 1 - distance))"
+    },
+    {
+      "id": "q14",
+      "query": "What file formats does the document loader support?",
+      "expected_source": "loader.py",
+      "actual_top1": "data\\raw\\loader.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.4081,
+      "notes": "SUPPORTED_EXTENSIONS = ['.txt', '.md']"
+    },
+    {
+      "id": "q15",
+      "query": "How does the RAG pipeline work end to end?",
+      "expected_source": "rag_assistant.py",
+      "actual_top1": "data\\raw\\rag_assistant.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.318,
+      "notes": "RAGAssistant.ask(): retrieve \u2192 build context \u2192 build prompt \u2192 generate"
+    },
+    {
+      "id": "q16",
+      "query": "What are the MVP success criteria?",
+      "expected_source": "project_mvp.md",
+      "actual_top1": "data\\raw\\project_mvp.md",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3318,
+      "notes": "Add doc in <5 min, retrieve consistently, grounded answers, weekly use"
+    },
+    {
+      "id": "q17",
+      "query": "What features are postponed after the MVP?",
+      "expected_source": "project_mvp.md",
+      "actual_top1": "data\\raw\\project_mvp.md",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3853,
+      "notes": "Web UI, conversation memory, hybrid search, agents, multiple KBs"
+    },
+    {
+      "id": "q18",
+      "query": "What metadata does each chunk include?",
+      "expected_source": "chunking.py",
+      "actual_top1": "data\\raw\\chunking.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.3014,
+      "notes": "source, chunk_index, chunk_length, chunker_version"
+    },
+    {
+      "id": "q19",
+      "query": "How does semantic search query ChromaDB?",
+      "expected_source": "search.py",
+      "actual_top1": "data\\raw\\search.py",
+      "correct_at_1": true,
+      "hit_in_topk": true,
+      "top1_distance": 0.2749,
+      "notes": "semantic_search() embeds query then calls collection.query()"
+    },
+    {
+      "id": "q20",
+      "query": "How does the query pipeline wire retrieval to generation?",
+      "expected_source": "query.py",
+      "actual_top1": "data\\raw\\rag_assistant.py",
+      "correct_at_1": false,
+      "hit_in_topk": true,
+      "top1_distance": 0.4477,
+      "notes": "answer_question(): retrieve \u2192 log \u2192 build prompt \u2192 generate"
+    }
+  ]
+}
