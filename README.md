@@ -108,7 +108,8 @@ Personal-Knowledge-Assistant/
 ├── src/
 |   ├── assistant/
 │   │   ├── adapters.py
-│   │   └── rag_assistant.py
+│   │   ├── rag_assistant.py
+│   │   └── memory.py
 │   ├── config/
 │   │   ├── config.py
 │   │   ├── prompts.py
@@ -304,12 +305,12 @@ Question
 
 ### Phase 6 - Quality Improvements
 
-- [ ] Add source references
+- [x] Add source references
     - Example: `Source: weekly_review_may.txt`
-- [ ] Add converation memory
+- [x] Add converation memory
     - Store:
-        - [ ] previous questions
-        - [ ] previous answers
+        - [x] previous questions
+        - [x] previous answers
     - Simple in-memory list is enough.
 
 ---

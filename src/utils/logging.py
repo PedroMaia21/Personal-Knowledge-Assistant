@@ -106,3 +106,50 @@ def log_retrieval_json(query: str, chunks: list) -> None:
         })
 
     print(json.dumps(payload, indent=2))
+
+def display_answer(result: dict) -> None:
+    """
+    Prints the LLM answer followed by a formatted source list.
+
+    Expects the dict returned by answer_question() or RAGAssistant.ask():
+        {
+            "answer":  str,
+            "chunks":  list,
+            "sources": list[{"file": str, "chunk_index": int}],
+        }
+
+    Example output:
+        ══════════════════════════════════════════════════
+        Answer
+        ══════════════════════════════════════════════════
+
+        ChromaDB stores vectors in a persistent local directory...
+
+        ──────────────────────────────────────────────────
+        Sources
+        ──────────────────────────────────────────────────
+          [1]  doc_a_technical.md  (chunk 0)
+          [2]  doc_a_technical.md  (chunk 1)
+    """
+    divider = "═" * 50
+    thin    = "─" * 50
+
+    print(f"\n{divider}")
+    print("Answer")
+    print(divider)
+    print()
+    print(result.get("answer", "").strip())
+    print()
+
+    sources = result.get("sources") or []
+    if sources:
+        print(thin)
+        print("Sources")
+        print(thin)
+        for i, src in enumerate(sources, start=1):
+            print(f"  [{i}]  {src['file']}  (chunk {src['chunk_index']})")
+    else:
+        print(thin)
+        print("  (no sources retrieved)")
+
+    print()
