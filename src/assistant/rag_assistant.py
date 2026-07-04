@@ -1,55 +1,72 @@
+# src/assistant/rag_assistant.py
 """
 rag_assistant.py — RAG pipeline orchestrator for PKA-AI.
 
 Wires retrieval → context building → prompt → LLM generation into
-one injectable, testable class.
+one injectable, testable class. Now also wires in short-term
+conversation memory.
 
 Pipeline:
     question
         ↓  retriever.retrieve()
     top-k chunks
-        ↓  prompt_builder.build(chunks, question)   ← chunks passed directly
+        ↓  prompt_builder.build(chunks, question, history)  ← memory injected here
     prompt string
         ↓  llm_client.generate()
     answer string + sources
+        ↓  memory.add(question, answer)
 
-Dependencies are injected via __init__, so each component can be
-swapped or mocked independently in tests.
+Dependencies are injected via __init__, so each component — including
+memory — can be swapped or mocked independently in tests.
+
+Conversation memory and retrieved chunks remain separate concerns:
+memory only ever stores/returns {"question", "answer"} pairs and knows
+nothing about chunks, sources, or embeddings.
 """
 
 import logging
+
+from src.assistant.memory import ConversationMemory
 
 logger = logging.getLogger(__name__)
 
 
 class RAGAssistant:
     """
-    End-to-end RAG assistant.
+    End-to-end RAG assistant with short-term conversation memory.
 
     Args:
         retriever      — Any object with a .retrieve(question, k) method.
                          Expected to return a list of chunk dicts:
                          [{"text": str, "metadata": dict, ...}, ...]
 
-        prompt_builder — Any object with a .build(chunks, question) method.
-                         Expected to return a prompt string.
+        prompt_builder — Any object with a .build(chunks, question, history)
+                         method. Expected to return a prompt string.
                          Receives raw chunk dicts (not pre-joined text) so it
-                         can embed source labels via format_context_block().
+                         can embed source labels via format_context_block(),
+                         and raw history pairs via format_conversation_block().
 
         llm_client     — Any object with a .generate(prompt) method.
                          Expected to return an answer string.
+
+        memory         — Optional ConversationMemory instance. Defaults to a
+                         fresh one (empty history) if not provided. Inject
+                         a shared instance to persist history across
+                         multiple RAGAssistant calls within the same session.
     """
 
-    def __init__(self, retriever, prompt_builder, llm_client):
+    def __init__(self, retriever, prompt_builder, llm_client, memory: ConversationMemory | None = None):
         self.retriever = retriever
         self.prompt_builder = prompt_builder
         self.llm_client = llm_client
+        self.memory = memory if memory is not None else ConversationMemory()
 
     # ── Public API ────────────────────────────────────────────────────────────
 
     def ask(self, question: str, k: int = 5) -> dict:
         """
-        Run the full RAG pipeline for a single question.
+        Run the full RAG pipeline for a single question, using and then
+        updating conversation memory.
 
         Args:
             question : Natural-language question from the user.
@@ -62,17 +79,19 @@ class RAGAssistant:
                 prompt  : str   — the exact prompt sent to the LLM (for debugging)
                 sources : list  — deduplicated [{file, chunk_index}] for display
         """
-        # Step 1 — Retrieve relevant chunks
+        # Step 1 — Retrieve relevant chunks (retrieval is unaffected by memory)
         logger.info(f"[RAGAssistant] Retrieving top-{k} chunks...")
         chunks = self.retriever.retrieve(question, k=k)
 
         logger.debug("QUESTION\n%s", question)
         logger.debug("CHUNKS\n%s", chunks)
 
-        # Step 2 — Build prompt (chunks passed directly so source labels survive)
+        # Step 2 — Build prompt (chunks + prior turns, kept as separate sections)
         logger.info("[RAGAssistant] Building prompt...")
-        prompt = self.prompt_builder.build(chunks=chunks, question=question)
+        history = self.memory.get_history()
+        prompt = self.prompt_builder.build(chunks=chunks, question=question, history=history)
 
+        logger.debug("HISTORY\n%s", history)
         logger.debug("PROMPT\n%s", prompt)
 
         # Step 3 — Generate answer
@@ -81,7 +100,10 @@ class RAGAssistant:
 
         logger.debug("ANSWER\n%s", answer)
 
-        # Step 4 — Assemble source list for display
+        # Step 4 — Update conversation memory for the next turn
+        self.memory.add(question, answer)
+
+        # Step 5 — Assemble source list for display
         sources = _extract_sources(chunks)
 
         return {
