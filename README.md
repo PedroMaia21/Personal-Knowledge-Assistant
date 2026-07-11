@@ -150,12 +150,13 @@ Personal-Knowledge-Assistant/
 │
 ├── tests/
 │   ├── integration/
-│   │   ├── test_semantic_search.pypy
+│   │   ├── test_semantic_search.py
 │   │   └── test_prompt_grounding.py
 │   └── unit/
 │       ├── test_embeddings.py
 │       └── test_vector_store.py
 │
+├── app.py
 ├── requirements.txt
 ├── project_mvp.md
 ├── README.md
