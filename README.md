@@ -319,10 +319,10 @@ Question
 ### Phase 7 - Optional UI
 Only when backend works
 
-- [ ] Create Streamlit interface
-    - [ ] Upload file
-    - [ ] Ask Questions
-    - [ ] Show Answers
+- [x] Create Streamlit interface
+    - [x] Upload file
+    - [x] Ask Questions
+    - [x] Show Answers
 
 --- 
 

@@ -1,61 +1,38 @@
 """
-query.py — RAG pipeline orchestrator for PKA-AI.
+query.py — DEPRECATED.
 
-Responsibility: wire retrieval → prompt → generation into one callable.
-Each step stays in its own module; this file only coordinates them.
+This module used to duplicate what RAGAssistant.ask() now does:
+retrieve → build prompt → call LLM. That duplication is exactly what
+the "single RAG entry point" refactor was meant to eliminate.
 
-Pipeline:
-    question
-        ↓  search.semantic_search()
-    top-k chunks
-        ↓  prompts.build_rag_prompt()
-    prompt string
-        ↓  llm.generate_chat_response()
-    answer string
+Retrieval, prompt-building, LLM invocation, and conversation memory
+now live behind one orchestrator: src.assistant.rag_assistant.RAGAssistant.
+
+Migration:
+    OLD:
+        from src.retrieval.query import answer_question
+        result = answer_question(question, top_k=5)
+
+    NEW:
+        from src.assistant.rag_assistant import RAGAssistant
+        from src.assistant.adapters import SearchRetriever, PromptBuilder, OllamaLLMClient
+
+        assistant = RAGAssistant(
+            retriever=SearchRetriever(),
+            prompt_builder=PromptBuilder(),
+            llm_client=OllamaLLMClient(),
+        )
+        result = assistant.ask(question, k=5)
+
+`result` has the same shape either way: {"answer", "chunks", "prompt", "sources"}.
+
+This module is intentionally left without a working `answer_question()`
+so any remaining caller fails loudly at import time instead of silently
+bypassing conversation memory and the shared pipeline.
 """
 
-import logging
-
-from src.retrieval.search import semantic_search_reranked
-from src.config.prompts import build_rag_prompt, format_context_block, SYSTEM_PROMPT
-from src.config.config import DEFAULT_TOP_K
-from src.models.llm import generate_chat_response
-from src.utils.logging import log_retrieval
-
-logger = logging.getLogger(__name__)
-
-
-def answer_question(question: str, top_k: int = DEFAULT_TOP_K) -> dict:
-    """
-    End-to-end RAG query: retrieve → build prompt → generate answer.
-
-    Args:
-        question : Natural-language question from the user.
-        top_k    : Number of chunks to retrieve (default 5).
-
-    Returns:
-        A dict with:
-            answer   : str   — the LLM-generated answer
-            chunks   : list  — the raw retrieved chunk dicts (for attribution)
-            prompt   : str   — the exact prompt sent to the LLM (for debugging)
-    """
-    # ── Step 1: Retrieve relevant chunks ──────────────────────────────────────
-    logger.info(f"Retrieving top-{top_k} chunks for question: {question!r}")
-    chunks = semantic_search_reranked(question, top_k=top_k)
-
-    # Log retrieval details (chunk IDs, sources, scores) for observability
-    log_retrieval(question, chunks)
-
-    # ── Step 2: Build prompt ───────────────────────────────────────────────────
-    prompt = build_rag_prompt(question, chunks)
-    logger.debug(f"Prompt built ({len(prompt)} chars)")
-
-    # ── Step 3: Generate answer ────────────────────────────────────────────────
-    logger.info("Sending prompt to LLM...")
-    answer = generate_chat_response(prompt, system_override=SYSTEM_PROMPT)
-
-    return {
-        "answer": answer,
-        "chunks": chunks,
-        "prompt": prompt,
-    }
+raise ImportError(
+    "src.retrieval.query.answer_question has been removed. "
+    "Use src.assistant.rag_assistant.RAGAssistant.ask() instead — "
+    "see the module docstring for the migration snippet."
+)
