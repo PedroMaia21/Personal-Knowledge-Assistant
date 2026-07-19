@@ -127,8 +127,11 @@ Personal-Knowledge-Assistant/
 │   │   ├── helpers.py
 │   │   ├── logging.py
 │   │   └── reranker.py
-|   └── vectorstore/
-│       └── chroma_store.py
+|   ├── vectorstore/
+│   │   └── chroma_store.py
+│   └── core/
+│       ├── embedding_client.py
+│       └── chroma_client.py       
 │
 ├── data/
 │   ├── raw/
