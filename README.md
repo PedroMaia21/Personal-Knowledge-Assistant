@@ -121,7 +121,6 @@ Personal-Knowledge-Assistant/
 │   │   ├── embedding.py
 │   │   └── llm.py
 │   ├── retrieval/
-│   │   ├── query.py
 │   │   └── search.py
 │   ├── utils/
 │   │   ├── helpers.py
