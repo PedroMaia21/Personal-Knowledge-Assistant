@@ -1,34 +1,31 @@
-import logging
-from typing import List, Dict, Any
-from src.config.config import EMBEDDING_MODEL
-import ollama
+# src/models/embedding.py
+"""
+embedding.py — DEPRECATED.
 
-logger = logging.getLogger(__name__)
+This module used to own its own Ollama call (`generate_embedding`) and
+its own batching loop (`generate_embeddings`), duplicating what
+search.py's get_embedding() also did independently. That duplication is
+exactly what the shared EmbeddingClient was introduced to eliminate.
 
-MODEL = EMBEDDING_MODEL
+Migration:
+    OLD:
+        from src.models.embedding import generate_embedding, generate_embeddings
+        vector = generate_embedding(text)
+        results = generate_embeddings(chunks)
 
-def generate_embedding(text: str) -> List[float]:
-    """Generates a standalone vector representation for a single text chunk."""
-    response = ollama.embeddings(
-        model = MODEL, 
-        prompt = text    
-    )
-    
-    return response["embedding"]
+    NEW:
+        from src.core.embedding_client import EmbeddingClient
+        client = EmbeddingClient()
+        vector = client.generate(text)
+        results = client.generate_many(chunks)
 
-def generate_embeddings(chunks: List[str]) -> List[Dict[str, Any]]:
-    """Batches incoming text strings through the Ollama embedding client."""
-    results = []
+Construct one EmbeddingClient per process (e.g. in app.py) and inject it
+into whatever needs embeddings — ingestion and SearchRetriever alike —
+rather than importing a module-level function here.
+"""
 
-    for i, chunk in enumerate(chunks):
-        try:
-            vector = generate_embedding(chunk)
-            
-            results.append({
-                "text": chunk,
-                "embedding": vector
-            })
-        except Exception as e:
-            logger.error(f"Error generation vector on chunk {i}: {e}")
-    
-    return results
+raise ImportError(
+    "src.models.embedding.generate_embedding/generate_embeddings have been "
+    "removed. Use src.core.embedding_client.EmbeddingClient instead — "
+    "see the module docstring for the migration snippet."
+)

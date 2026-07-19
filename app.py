@@ -26,18 +26,20 @@ import streamlit as st
 
 from src.ingestion.loader import load_file
 from src.ingestion.chunking import ChunkerV1
-from src.models.embedding import generate_embeddings
+from src.core.embedding_client import EmbeddingClient
 from src.vectorstore.chroma_store import store_chunks
 from src.assistant.memory import ConversationMemory
 from src.assistant.rag_assistant import RAGAssistant
 from src.assistant.adapters import SearchRetriever, PromptBuilder, OllamaLLMClient
 
+# ── Single shared embedding client for the whole app process ───────────────
+embedding_client = EmbeddingClient()
 
 # ── Backend wiring (Step "Before Coding") ──────────────────────────────────
 # ingest_document(path)  → chunk → embed → store
 # assistant.ask(question) → RAGAssistant, built from existing adapters
 
-def ingest_document(path: Path) -> int:
+def ingest_document(path: Path, embedding_client: EmbeddingClient) -> int:
     """Reads, chunks, embeds, and stores a single document. Returns chunk count."""
     text = load_file(path)
 
@@ -47,23 +49,21 @@ def ingest_document(path: Path) -> int:
     if not chunks:
         return 0
 
-    embedded = generate_embeddings([c["text"] for c in chunks])
+    embedded = embedding_client.generate_many([c["text"] for c in chunks])
     vectors = [e["embedding"] for e in embedded]
 
     store_chunks(chunks, vectors)
     return len(chunks)
 
-
 @st.cache_resource
 def get_assistant() -> RAGAssistant:
-    """Built once per Streamlit session process; memory lives inside it."""
+    """Built once per Streamlit session process; shares the module-level embedding_client."""
     return RAGAssistant(
-        retriever=SearchRetriever(),
+        retriever=SearchRetriever(embedding_client=embedding_client),
         prompt_builder=PromptBuilder(),
         llm_client=OllamaLLMClient(),
         memory=ConversationMemory(),
     )
-
 
 # ── Session state ───────────────────────────────────────────────────────────
 

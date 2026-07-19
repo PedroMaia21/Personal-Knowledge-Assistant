@@ -1,13 +1,29 @@
 # src/assistant/adapters.py
 
+from src.core.embedding_client import EmbeddingClient
 from src.retrieval.search import semantic_search_reranked
 from src.config.prompts import build_rag_prompt, SYSTEM_PROMPT
 from src.models.llm import generate_chat_response
 
 
 class SearchRetriever:
+    """
+    Retrieval adapter for RAGAssistant.
+
+    Receives an EmbeddingClient instead of constructing its own Ollama
+    client — the caller (app.py / test setup) owns the single shared
+    instance for the process.
+    """
+
+    def __init__(self, embedding_client: EmbeddingClient | None = None):
+        self.embedding_client = embedding_client or EmbeddingClient()
+
     def retrieve(self, question, k):
-        return semantic_search_reranked(question, top_k=k)
+        return semantic_search_reranked(
+            question,
+            top_k=k,
+            embedding_client=self.embedding_client,
+        )
 
 
 class PromptBuilder:

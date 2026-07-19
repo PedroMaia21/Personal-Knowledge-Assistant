@@ -1,8 +1,10 @@
+# src/retrieval/search.py
 from chromadb import PersistentClient
 
+from src.core.embedding_client import EmbeddingClient
 from src.utils.helpers import normalize_similarity
 from src.utils.reranker import rerank
-from src.config.config import DEFAULT_TOP_K, CHROMA_DB_PATH, CHROMA_COLLECTION_NAME, EMBEDDING_MODEL
+from src.config.config import DEFAULT_TOP_K, CHROMA_DB_PATH, CHROMA_COLLECTION_NAME
 
 client = PersistentClient(path=CHROMA_DB_PATH)
 
@@ -11,23 +13,30 @@ collection = client.get_or_create_collection(
     metadata={"hnsw:space": "cosine"},
 )
 
-
-def get_embedding(text: str):
-    import ollama
-    response = ollama.embeddings(
-        model=EMBEDDING_MODEL,
-        prompt=text,
-    )
-    return response["embedding"]
+# Fallback used only when a caller doesn't inject its own EmbeddingClient.
+# Keeps semantic_search() callable standalone (e.g. from a REPL or a test)
+# without forcing every caller to construct and pass a client.
+_default_embedding_client = EmbeddingClient()
 
 
-def semantic_search(query: str, top_k: int = DEFAULT_TOP_K):
+def semantic_search(
+    query: str,
+    top_k: int = DEFAULT_TOP_K,
+    embedding_client: EmbeddingClient | None = None,
+):
     """
     Pure vector search. Returns chunks sorted by cosine distance only.
     Use semantic_search_reranked() for the heuristic-boosted version.
+
+    Args:
+        embedding_client: Injected EmbeddingClient. Falls back to a shared
+                          module-level default if not provided — no module
+                          should call `ollama.embeddings()` directly anymore.
     """
+    client_to_use = embedding_client or _default_embedding_client
+
     # 1. Embed the query
-    query_embedding = get_embedding(query)
+    query_embedding = client_to_use.generate(query)
 
     # 2. Search ChromaDB
     results = collection.query(
@@ -50,13 +59,18 @@ def semantic_search(query: str, top_k: int = DEFAULT_TOP_K):
 
     return chunks
 
-def semantic_search_reranked(query: str, top_k: int = DEFAULT_TOP_K):
+
+def semantic_search_reranked(
+    query: str,
+    top_k: int = DEFAULT_TOP_K,
+    embedding_client: EmbeddingClient | None = None,
+):
     """
     Vector search followed by heuristic reranking.
- 
+
     Retrieves top_k chunks by cosine distance, then re-sorts them using
     three lightweight signals (distance score, size penalty, continuity bonus).
- 
+
     Each returned chunk contains a "rerank_scores" key with the full breakdown:
         {
             "distance_score":   float,
@@ -64,9 +78,8 @@ def semantic_search_reranked(query: str, top_k: int = DEFAULT_TOP_K):
             "continuity_bonus": float,
             "final_score":      float,
         }
- 
+
     Use reranker.format_rerank_debug(chunk) to print the breakdown for a chunk.
     """
-    chunks = semantic_search(query, top_k=top_k)
+    chunks = semantic_search(query, top_k=top_k, embedding_client=embedding_client)
     return rerank(chunks)
- 
