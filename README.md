@@ -79,25 +79,48 @@ Later:
 ---
 
 ### Overall System Design
+
+This reflects the pipeline as it runs today — not an aspirational future state.
+
 ```
-Documents
-   ↓
-Chunking
-   ↓
-Embeddings
-   ↓
-ChromaDB
-   ↓
-User Question (In progress)
-   ↓
-Semantic Search
-   ↓
-Relevant Chunks
-   ↓
-LLM Prompt (Yet to be developed)
-   ↓
-Answer
+                Documents
+                     │
+                     ▼
+             Document Loader
+                     │
+                     ▼
+               Text Chunking
+                     │
+                     ▼
+           Embedding Client
+                     │
+                     ▼
+                 ChromaDB
+                     │
+             Top-k Retrieval
+                     │
+              Heuristic Rerank
+                     │
+             Conversation Memory
+                     │
+                     ▼
+             Prompt Construction
+                     │
+                     ▼
+                 Ollama LLM
+                     │
+                     ▼
+                  Response
 ```
+
+Every question — from the CLI, the Streamlit app, or a script — enters and
+exits through exactly one orchestrator: `RAGAssistant.ask()`. Nothing calls
+retrieval, prompting, or the LLM directly outside of that class and the
+adapters it's composed from.
+
+**Conversation Memory is an implemented pipeline stage, not a planned one.**
+It is injected into `RAGAssistant`, read on every `ask()` call to resolve
+follow-up references ("it", "that"), and updated after each answer.
 
 ---
 
@@ -173,6 +196,37 @@ Personal-Knowledge-Assistant/
 - **Python**: 3.14.2
 - **Pip**: 25.3
 - **Ollama**: 0.24.0
+---
+
+## Architecture Decisions
+
+These are invariants, not conventions — code review should reject anything
+that violates them.
+
+- **All queries pass through `RAGAssistant`.** Retrieval, prompt
+  construction, memory injection, and the LLM call are only ever invoked
+  from inside `RAGAssistant.ask()`. The CLI, the Streamlit app, and any
+  script are callers of that method, never independent implementations of
+  the pipeline.
+- **Embeddings are generated exclusively through `EmbeddingClient`.**
+  No module calls `ollama.embeddings(...)` directly. The old
+  `src/models/embedding.py` functions have been removed in favor of this.
+- **ChromaDB is accessed only through `ChromaClient`.** No module
+  constructs `chromadb.PersistentClient(...)` or calls
+  `get_or_create_collection()` on its own — collection name, DB path, and
+  the `hnsw:space` metric are configured in exactly one place.
+- **Chunking parameters are versioned, never mutated.** `ChunkerV1`'s
+  constants are frozen; new strategies are added as `ChunkerV2`, `V3`, etc.,
+  each with its own constants block, so retrieval-quality comparisons stay
+  attributable to the right variable.
+- **Conversation memory and retrieved chunks are separate concerns.**
+  `ConversationMemory` only ever stores `{question, answer}` pairs. It knows
+  nothing about chunks, sources, or embeddings, and is never merged into the
+  context block sent to the LLM.
+- **`src/retrieval/query.py` has been removed.** It previously duplicated
+  the retrieve → prompt → LLM flow that `RAGAssistant` now owns exclusively.
+  No file in this project imports from it.
+
 ---
 
 ## Scope Definition
@@ -308,13 +362,19 @@ Question
 
 ### Phase 6 - Quality Improvements
 
-- [x] Add source references
+**Implemented**
+
+- [x] Source references
     - Example: `Source: weekly_review_may.txt`
-- [x] Add converation memory
-    - Store:
-        - [x] previous questions
-        - [x] previous answers
-    - Simple in-memory list is enough.
+- [x] Conversation memory
+    - Stores the last 5 question/answer exchanges (`MAX_HISTORY`), in-memory only, per session — not persisted to disk, not embedded, not summarized.
+    - Resolves follow-up references ("it", "that") without treating history as a source of facts.
+- [x] Heuristic reranker
+    - Re-scores raw ChromaDB results using distance + a fragment-size penalty + an adjacency/continuity bonus. No ML model — pure signal engineering.
+- [x] Shared, centralized clients
+    - One `EmbeddingClient`, one `ChromaClient` per process, injected everywhere instead of constructed ad hoc.
+- [x] Single RAG orchestration path
+    - `RAGAssistant` is the only entry point; the old duplicate pipeline in `src/retrieval/query.py` has been removed.
 
 ---
 
@@ -346,11 +406,31 @@ Later
 
 ## Current Features
 
-- Document ingestion
-- Chunking
-- Embedding generation
-- Vector storage
-- Semantic retrieval 
+- Document ingestion (`.txt`, `.md`, `.py`)
+- Sentence-agnostic chunking (`ChunkerV1` — frozen baseline; see `chunking_v1.md`)
+- Embedding generation via a single shared `EmbeddingClient`
+- Vector storage via a single shared `ChromaClient`
+- Semantic retrieval with heuristic reranking (`semantic_search_reranked`)
+- Retrieval observability logging (query, chunk IDs, sources, similarity scores)
+- Grounded answer generation with source attribution
+- Short-term conversation memory (last 5 exchanges, in-memory)
+- One orchestration path for every caller: `RAGAssistant`
+- Streamlit UI (`app.py`) and CLI (`scripts/chat_cli.py`), both built on the same pipeline
+
+---
+
+## Known Limitations (Technical Debt)
+
+Recorded here so it becomes the backlog, not a surprise.
+
+- **Memory is not persistent.** `ConversationMemory` lives in process memory only — it resets on every new CLI run or Streamlit session restart.
+- **No cross-encoder reranking.** The current reranker is heuristic (distance + size + adjacency signals), not a trained model. See `reranker.py`.
+- **No citation confidence.** Sources are shown, but there's no scored confidence that a cited chunk actually supports a given sentence in the answer.
+- **No automated evaluation benchmark.** `chunking_v1_eval_report.md` and `failure_analysis.md` are manual evaluation passes; there's no CI-run regression suite comparing chunker/retriever versions.
+- **ChunkerV1's boundary quality is poor.** 81% of chunks have a broken start boundary and 75% a broken end boundary (see `chunking_v1_eval_report.md`). `ChunkerV2` is designed (`chunking_v2.md`) but **not implemented**.
+- **No hybrid search (BM25 + vector).** Postponed per `project_mvp.md`.
+- **No multi-user / auth.** Single-user local system by design.
+- **No automated document monitoring.** Ingestion is manual; no folder-watching.
 
 ---
 
@@ -452,14 +532,21 @@ ollama run nomic-embed-text
 
 ---
 
-### 6. Run the API server
-```bash
-uvicorn app.main:app --reload
-```
-Then open:
+### 6. Run the assistant
 
-http://localhost:8000
-http://localhost:8000/docs
+**Streamlit UI** (upload documents, ask questions, view sources):
+```bash
+streamlit run app.py
+```
+
+**CLI** (same underlying `RAGAssistant` pipeline):
+```bash
+python scripts/chat_cli.py
+```
+
+`scripts/main.py` is a separate, minimal FastAPI health-check stub
+(`GET /` → `{"status": "running"}`) and is not currently wired to the RAG
+pipeline — it isn't the app entrypoint.
 
 ---
 
