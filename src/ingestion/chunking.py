@@ -119,8 +119,10 @@ class ChunkerV2:
         Level 4 – hard cut. Only used for a single sentence, code line or
                   table row above the hard limit: cut at the last whitespace
                   within the limit, or exactly at the limit if there is none.
-                  A single list item above the hard limit falls back to
-                  Level 3 then Level 4.
+
+    A single list item above the hard limit is split at its own Level 2
+    boundaries first – its paragraphs and nested items, recursively – and
+    only a part with no such boundary falls back to Level 3 then Level 4.
 
     The resulting units are packed greedily into chunks up to the soft limit.
     A single unit between the soft and hard limits becomes its own chunk, so
@@ -229,10 +231,23 @@ class ChunkerV2:
             if end - start <= self.hard_limit:
                 pieces.append((start, end))
             elif block.kind == LIST:
-                pieces.extend(self._prose_units(text, start, end))
+                pieces.extend(self._list_item_units(text, start, end))
             else:
                 pieces.extend(self._hard_split(text, start, end))
         return list(self._pack(pieces))
+
+    def _list_item_units(self, text: str, start: int, end: int) -> List[Span]:
+        """Level 2 inside an over-long list item, then Levels 3–4 for any part without one."""
+        parts = _list_item_parts(text, start, end)
+        if len(parts) == 1:
+            return self._prose_units(text, start, end)
+        units: List[Span] = []
+        for part in parts:
+            if part[1] - part[0] <= self.hard_limit:
+                units.append(part)
+            else:
+                units.extend(self._list_item_units(text, *part))
+        return units
 
     def _join_if_fits(self, parts: List[Span], start: int, stop: int) -> List[Span]:
         """Merges parts[start:stop] into one span if it fits the hard limit."""
@@ -331,14 +346,9 @@ def _scan_code_block(text: str, lines: List[Span], i: int) -> Optional[Tuple[_Bl
     least as long). Contents are opaque: nothing inside is interpreted. An
     unclosed fence runs to the end of the document.
     """
-    line = _line(text, lines[i])
-    match = _FENCE_OPEN.match(line)
-    if not match:
+    closing = _fence_closing(_line(text, lines[i]))
+    if not closing:
         return None
-    fence = match.group(1)
-    if fence[0] == "`" and "`" in line[match.end():]:
-        return None  # inline code such as ```x```, not a fence
-    closing = re.compile(rf" {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}[ \t\r]*")
 
     last = i + 1
     while last < len(lines) and not closing.fullmatch(_line(text, lines[last])):
@@ -407,6 +417,69 @@ def _scan_list(text: str, lines: List[Span], i: int) -> Optional[Tuple[_Block, i
     ]
     block = _Block(LIST, _lines_span(text, lines, i, last), items)
     return block, last + 1
+
+
+def _list_item_parts(text: str, start: int, end: int) -> List[Span]:
+    """
+    Paragraph-level split points inside one list item, used only when the
+    item exceeds the hard limit. A new part starts at:
+      - a nested item marker one level deeper than the item's first line
+        (deeper markers stay with their parent nested item);
+      - a line after a blank line, unless it is indented under a nested
+        item (that item's own continuation paragraph).
+    Lines inside a fenced code block are never split points. Applied to a
+    part again, this splits that nested item or paragraph the same way.
+    """
+    line_start = text.rfind("\n", 0, start) + 1
+    first_line = text[line_start:start] + text[start:end].split("\n", 1)[0]
+    base_indent = len(first_line) - len(first_line.lstrip(" \t"))
+
+    lines = [(start + s, start + e) for s, e in _line_spans(text[start:end])]
+    part_starts = [0]
+    child_indent: Optional[int] = None
+    closing: Optional[re.Pattern] = None
+    after_blank = False
+    for n in range(1, len(lines)):
+        if _is_blank(text, lines[n]):
+            after_blank = True
+            continue
+        line = _line(text, lines[n])
+        stripped = line.lstrip(" \t")
+        if closing:
+            if closing.fullmatch(stripped):
+                closing = None
+            after_blank = False
+            continue
+        indent = len(line) - len(stripped)
+        under_child = child_indent is not None and indent > child_indent
+        if _LIST_ITEM.match(stripped) and indent > base_indent and not under_child:
+            child_indent = indent
+            part_starts.append(n)
+        elif after_blank and not under_child:
+            child_indent = None
+            part_starts.append(n)
+        closing = _fence_closing(stripped)
+        after_blank = False
+
+    part_ends = [n - 1 for n in part_starts[1:]] + [len(lines) - 1]
+    return [
+        _strip_span(text, lines[first][0], lines[last][1])
+        for first, last in zip(part_starts, part_ends)
+    ]
+
+
+def _fence_closing(line: str) -> Optional[re.Pattern]:
+    """
+    If *line* opens a ``` or ~~~ fence, the pattern of its closing fence
+    (same character, at least as long); otherwise None.
+    """
+    match = _FENCE_OPEN.match(line)
+    if not match:
+        return None
+    fence = match.group(1)
+    if fence[0] == "`" and "`" in line[match.end():]:
+        return None  # inline code such as ```x```, not a fence
+    return re.compile(rf" {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}[ \t\r]*")
 
 
 def _structure_block(

@@ -543,3 +543,131 @@ LARGE_MARKDOWN = "\n\n".join([
 def test_large_markdown_document_invariants(soft, hard):
     chunks = make_chunker(soft, hard).chunk_document(LARGE_MARKDOWN)
     assert_valid(chunks, LARGE_MARKDOWN, hard=hard)
+
+
+# ══ Paragraph/list fallback (Task 23) ═══════════════════════
+
+
+def stripped_lines(chunks):
+    return [line.strip() for c in chunks for line in c["text"].split("\n") if line.strip()]
+
+
+# ── Paragraphs next to lists ────────────────────────────────
+
+def test_paragraph_then_list_split_at_blank_line_when_both_do_not_fit():
+    text = "A paragraph before.\n\n- one\n- two"
+    chunks = make_chunker(soft=20, hard=100).chunk_document(text)
+    assert texts(chunks) == ["A paragraph before.", "- one\n- two"]
+
+
+def test_list_then_paragraph_split_at_blank_line_when_both_do_not_fit():
+    text = "- one\n- two\n\nA paragraph after."
+    assert kinds(text) == [LIST, PROSE]
+    chunks = make_chunker(soft=15, hard=100).chunk_document(text)
+    assert texts(chunks) == ["- one\n- two", "A paragraph after."]
+
+
+def test_paragraphs_and_lists_are_packed_together_when_they_fit():
+    text = "Intro.\n\n- one\n- two\n\nOutro."
+    assert texts(make_chunker(soft=100, hard=200).chunk_document(text)) == [text]
+
+
+# ── Oversized list items ────────────────────────────────────
+
+def test_oversized_item_splits_at_its_paragraphs_before_sentences():
+    first = "- First para. " + " ".join(["More of the first."] * 3)
+    second = "Second para. " + " ".join(["More of the second."] * 3)
+    text = f"{first}\n\n  {second}\n- Short."
+    chunks = make_chunker(soft=40, hard=100).chunk_document(text)
+    # Each paragraph (< hard) stays whole instead of being sentence-split.
+    assert texts(chunks) == [first, second, "- Short."]
+
+
+def test_oversized_item_splits_between_nested_items_never_mid_line():
+    children = [f"  - child {i} has no terminator" for i in range(8)]
+    text = "- Parent\n" + "\n".join(children) + "\n- Next"
+    chunks = make_chunker(soft=70, hard=100).chunk_document(text)
+
+    assert_valid(chunks, text, hard=100)
+    # No line was cut (the sentence/hard-cut fallback would have cut them).
+    assert set(stripped_lines(chunks)) == {line.strip() for line in text.split("\n")}
+    assert chunks[0]["text"].startswith("- Parent\n  - child 0")
+
+
+def test_nested_item_keeps_its_children_and_continuation_paragraph():
+    child = "  - child\n    - grandchild a\n    - grandchild b\n\n    Child's own paragraph."
+    text = "- Parent line\n" + child + "\n  - second child"
+    chunks = make_chunker(soft=20, hard=len(child)).chunk_document(text)
+    assert texts(chunks) == ["- Parent line", child.lstrip(), "- second child"]
+
+
+def test_parent_paragraph_after_nested_items_is_a_split_point():
+    text = "- Parent\n  - child one\n  - child two\n\n  Back in the parent item."
+    chunks = make_chunker(soft=25, hard=40).chunk_document(text)
+    assert texts(chunks) == [
+        "- Parent\n  - child one",
+        "- child two",
+        "Back in the parent item.",
+    ]
+
+
+def test_oversized_nested_item_is_split_at_its_own_children():
+    grandchildren = "\n".join(f"    - grandchild {i}" for i in range(6))
+    text = "- Parent\n  - child\n" + grandchildren
+    chunks = make_chunker(soft=40, hard=60).chunk_document(text)
+
+    assert_valid(chunks, text, hard=60)
+    assert set(stripped_lines(chunks)) == {line.strip() for line in text.split("\n")}
+
+
+def test_nested_item_without_boundaries_falls_back_to_sentences():
+    long_child = "  - " + " ".join(f"Child sentence {i} here." for i in range(6))
+    text = "- Parent\n" + long_child
+    chunks = make_chunker(soft=40, hard=60).chunk_document(text)
+
+    assert len(chunks) > 2
+    assert_valid(chunks, text, hard=60)
+    assert all(c["text"].endswith(".") for c in chunks[1:])
+
+
+def test_blank_line_inside_fenced_code_in_item_is_not_a_split_point():
+    code = "  ```\n  x = 1\n\n  y = 2\n  ```"
+    text = "- Example item\n\n" + code + "\n\n  Done. " + "Filler. " * 6
+    chunks = make_chunker(soft=20, hard=60).chunk_document(text)
+
+    assert_valid(chunks, text, hard=60)
+    assert code.lstrip() in texts(chunks)
+
+
+def test_oversized_item_with_crlf():
+    text = "- Parent\r\n  - child one\r\n  - child two\r\n\r\n  Parent again.\r\n- Next\r\n"
+    chunks = make_chunker(soft=5, hard=30).chunk_document(text)
+    assert texts(chunks) == ["- Parent", "- child one", "- child two", "Parent again.", "- Next"]
+
+
+# ── Mixed document ──────────────────────────────────────────
+
+FALLBACK_MARKDOWN = "\n\n".join([
+    "Intro paragraph. It sets the scene.",
+    "Steps:\n" + "\n".join(
+        f"{i}. Step {i}\n   - detail a of step {i}\n   - detail b of step {i}\n\n"
+        f"   Explanation of step {i}. It continues here."
+        for i in range(1, 4)
+    ),
+    TABLE_TEXT,
+    CODE,
+    " ".join(f"Closing sentence {i}." for i in range(12)),
+])
+
+
+@pytest.mark.parametrize("soft, hard", [(40, 70), (80, 120), (1200, 2000)])
+def test_mixed_document_with_oversized_items_keeps_structures_intact(soft, hard):
+    chunks = make_chunker(soft, hard).chunk_document(FALLBACK_MARKDOWN)
+    assert_valid(chunks, FALLBACK_MARKDOWN, hard=hard)
+    # Code block and table each fit the hard limit, so each stays whole.
+    assert any(CODE in t for t in texts(chunks))
+    assert any(TABLE_TEXT in t for t in texts(chunks))
+    # No list line is cut.
+    list_block = FALLBACK_MARKDOWN.split("\n\n| Name")[0].split("Steps:\n")[1]
+    list_lines = {line.strip() for line in list_block.split("\n") if line.strip()}
+    assert list_lines <= set(stripped_lines(chunks))

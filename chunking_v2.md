@@ -144,7 +144,7 @@ The following document structures must be treated as **indivisible units** by th
 3. Step three
 ```
 
-**Rule:** Do not split a list unless it exceeds the hard size limit. If a list must be split, split only at the boundary between distinct top-level items — never mid-item or mid-sub-list.
+**Rule:** Do not split a list unless it exceeds the hard size limit. If a list must be split, split only at the boundary between distinct top-level items — never mid-item or mid-sub-list. The only exception is a single item that itself exceeds the hard size limit; see Open Question 5 (resolved).
 
 **Rationale:** A numbered procedure becomes dangerous when the first half of the steps is in one chunk and the remainder in another. The LLM may generate an incomplete answer with high confidence.
 
@@ -326,6 +326,8 @@ The following decisions are intentionally deferred. They require empirical testi
 4. **Adaptive overlap values** — What specific overlap sizes (in chars) should each structure type use? These should be determined empirically by inspecting boundary continuity in the test documents.
 
 5. **List split granularity** — For lists exceeding the hard limit, should the split always occur at the top-level item boundary, or is splitting between sub-items acceptable for deeply nested lists?
+
+   **Resolved (Task 23):** An oversized list item may be split at nested list-item and paragraph boundaries before falling back to sentence splitting (Level 3) and hard cuts (Level 4). This applies recursively, and only when the current item exceeds the hard limit. Lists and items that fit within the hard limit remain structurally intact.
 
 ---
 
