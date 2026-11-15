@@ -534,6 +534,19 @@ ollama run nomic-embed-text
 
 ### 6. Run the assistant
 
+**Build the knowledge base** (bulk-ingest everything in `data/raw/` into the
+live `knowledge_base` collection), from the repository root:
+```bash
+python -m scripts.ingest_data
+```
+If the collection already holds vectors, the script refuses to run. To rebuild
+it from scratch, pass `--reset` — this **permanently deletes every vector in
+the `knowledge_base` collection** before re-ingesting (other collections and
+the rest of `chroma_db/` are untouched):
+```bash
+python -m scripts.ingest_data --reset
+```
+
 **Streamlit UI** (upload documents, ask questions, view sources):
 ```bash
 streamlit run app.py
