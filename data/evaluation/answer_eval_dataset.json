@@ -1,0 +1,759 @@
+[
+  {
+    "id": "a01",
+    "query": "How many chunks does PKA-AI retrieve per query by default?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "Five chunks: DEFAULT_TOP_K = 5.",
+    "key_points": ["5 chunks per query (DEFAULT_TOP_K)"],
+    "forbidden_claims": ["Any default other than 5"],
+    "evidence": [
+      {"source": "config.py", "quote": "DEFAULT_TOP_K = 5"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["config.py"],
+    "acceptance_criteria": "States 5. Mentioning DEFAULT_TOP_K or config.py is welcome but not required.",
+    "related_retrieval_query": "q10",
+    "notes": "Retrieval query q10 is a complete miss for both V1 and V2 (config.py never in top 5), so this case is likely to expose a retrieval-driven answer failure or abstention."
+  },
+  {
+    "id": "a02",
+    "query": "How many dimensions do the vectors produced by nomic-embed-text have?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "768 dimensions; the vectors are unit-normalised.",
+    "key_points": ["768 dimensions"],
+    "forbidden_claims": ["Any dimensionality other than 768"],
+    "evidence": [
+      {"source": "notes.md", "quote": "nomic-embed-text produces 768-dimensional unit-normalised vectors."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "States 768. Mentioning unit normalisation is optional.",
+    "related_retrieval_query": null,
+    "notes": ""
+  },
+  {
+    "id": "a03",
+    "query": "What exact reply is the assistant instructed to give when the answer is not in the context?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "\"I don't know based on the provided context.\" (NO_CONTEXT_REPLY in prompts.py).",
+    "key_points": ["The reply text \"I don't know based on the provided context.\""],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "prompts.py", "quote": "NO_CONTEXT_REPLY = \"I don't know based on the provided context.\""},
+      {"source": "prompts.py", "quote": "- If the answer cannot be found in the context, respond with exactly:"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["prompts.py"],
+    "acceptance_criteria": "Quotes the reply string verbatim or near-verbatim, presented as the instructed reply.",
+    "related_retrieval_query": "q08",
+    "notes": "A correct answer contains the refusal string itself. An evaluator must not count this as an abstention; check that the string is presented as the answer, not used to decline."
+  },
+  {
+    "id": "a04",
+    "query": "What fix do my notes suggest for perfectionism that causes paralysis on writing tasks?",
+    "category": "precision",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "Write a bad first draft intentionally.",
+    "key_points": ["Write a bad first draft intentionally"],
+    "forbidden_claims": ["Break the task into smaller pieces (fix for a different blocker)", "Remove apps from the phone during work hours (fix for a different blocker)"],
+    "evidence": [
+      {"source": "notes.md", "quote": "- Perfectionism causing paralysis on writing tasks → fix: write a bad first draft intentionally"}
+    ],
+    "distractors": [
+      {"source": "notes.md", "quote": "- Starting tasks that feel ambiguous or too large → fix: break into smaller pieces"},
+      {"source": "notes.md", "quote": "- Low-energy afternoons wasted on social media → fix: remove apps from phone during work hours"}
+    ],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "Gives the bad-first-draft fix. Listing the other procrastination fixes as context is acceptable only if they are clearly attributed to their own blockers.",
+    "related_retrieval_query": null,
+    "notes": "The three fixes sit in adjacent lines of the same list, so the right passage is easy to retrieve but the wrong item is easy to pick."
+  },
+  {
+    "id": "a05",
+    "query": "When is the daily shutdown ritual, and what does it involve?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "At 16:30. Review the task list, capture loose ends, write tomorrow's plan and say \"shutdown complete.\" It signals that work is done and prevents evening rumination.",
+    "key_points": ["16:30", "Review task list", "Capture loose ends", "Write tomorrow's plan", "Say \"shutdown complete\""],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "notes.md", "quote": "- 16:30 → Daily shutdown ritual"},
+      {"source": "notes.md", "quote": "Shutdown ritual: review task list, capture loose ends, write tomorrow's plan, say \"shutdown complete.\""}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "States 16:30 and at least three of the four steps.",
+    "related_retrieval_query": null,
+    "notes": ""
+  },
+  {
+    "id": "a06",
+    "query": "What is the 90-minute rule?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "The brain can sustain high-focus work for roughly 90 minutes before needing a break; after a deep work session, take a real break with no phone and no email.",
+    "key_points": ["About 90 minutes of high-focus work", "Then a break is needed"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "notes.md", "quote": "The 90-minute rule: the brain can sustain high-focus work for roughly 90 minutes before needing a break."},
+      {"source": "notes.md", "quote": "After a deep work session, take a real break — no phone, no email."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "Both key points present. The no-phone/no-email detail is optional.",
+    "related_retrieval_query": null,
+    "notes": ""
+  },
+  {
+    "id": "a07",
+    "query": "Which file formats does the document loader support?",
+    "category": "direct_fact",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": ".txt and .md files (SUPPORTED_EXTENSIONS = ['.txt', '.md']).",
+    "key_points": [".txt", ".md"],
+    "forbidden_claims": ["PDF support", "DOCX support"],
+    "evidence": [
+      {"source": "loader.py", "quote": "SUPPORTED_EXTENSIONS = ['.txt', '.md']"}
+    ],
+    "distractors": [
+      {"source": "project_mvp.md", "quote": "- Process supported formats"}
+    ],
+    "relevant_sources": ["loader.py"],
+    "acceptance_criteria": "Names exactly .txt and .md according to the knowledge base.",
+    "related_retrieval_query": "q14",
+    "notes": "KB-snapshot sensitive: data/raw/loader.py is an older copy. The live src/ingestion/loader.py also supports .py. Grade against the KB, and update this case if data/raw is refreshed."
+  },
+  {
+    "id": "a08",
+    "query": "How does the reranker compute a chunk's final score?",
+    "category": "multi_chunk_synthesis",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "final_score = distance_score + size_bonus + continuity_bonus. The distance score is 1 / (1 + distance); a −0.10 size penalty applies to chunks with fewer than 40 words; a +0.15 continuity bonus is added for each adjacent chunk (same source, chunk_index within 1) already in the result set. Chunks are then sorted by final score, highest first.",
+    "key_points": ["Sum of three signals", "Distance score = 1 / (1 + distance)", "−0.10 penalty below 40 words", "+0.15 per adjacent neighbour from the same source in the results", "Sorted by final score descending"],
+    "forbidden_claims": ["Uses a cross-encoder or ML model"],
+    "evidence": [
+      {"source": "reranker.py", "quote": "final_score = distance_score + size_bonus + continuity_bonus"},
+      {"source": "reranker.py", "quote": "return 1.0 / (1.0 + distance)"},
+      {"source": "reranker.py", "quote": "MIN_WORDS: int = 40"},
+      {"source": "reranker.py", "quote": "SIZE_PENALTY: float = -0.10"},
+      {"source": "reranker.py", "quote": "CONTINUITY_BONUS: float = 0.15"},
+      {"source": "reranker.py", "quote": "ADJACENCY_GAP: int = 1"},
+      {"source": "reranker.py", "quote": "scored.sort(key=lambda c: c[\"rerank_scores\"][\"final_score\"], reverse=True)"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["reranker.py"],
+    "acceptance_criteria": "Names all three signals with correct values (1/(1+d), −0.10 below 40 words, +0.15 per adjacent neighbour). The sort order is optional.",
+    "related_retrieval_query": "q11",
+    "notes": "The summary sits in the module docstring, but the exact constants and the adjacency rule are further down the file. Under V1 they fall in different chunks."
+  },
+  {
+    "id": "a09",
+    "query": "When is the weekly review done, and what are its steps?",
+    "category": "direct_fact",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "Every Sunday evening. Steps: 1) clear inbox to zero, 2) review last week's calendar, 3) review the task list (close completed, reschedule incomplete), 4) review the project list, 5) review goals, 6) plan next week by setting the 3 most important outcomes.",
+    "key_points": ["Sunday evening", "Clear inbox to zero", "Review calendar", "Review task list", "Review project list", "Review goals", "Plan next week / 3 most important outcomes"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "notes.md", "quote": "Every Sunday evening, run the weekly review. Non-negotiable."},
+      {"source": "notes.md", "quote": "1. Clear inbox to zero"},
+      {"source": "notes.md", "quote": "2. Review calendar for last week — what happened, what was missed"},
+      {"source": "notes.md", "quote": "3. Review task list — close completed items, reschedule incomplete ones"},
+      {"source": "notes.md", "quote": "4. Review project list — is each project moving forward?"},
+      {"source": "notes.md", "quote": "5. Review goals — am I drifting or on track?"},
+      {"source": "notes.md", "quote": "6. Plan next week — set the 3 most important outcomes"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "States Sunday evening and at least 5 of the 6 steps, with no invented steps.",
+    "related_retrieval_query": null,
+    "notes": "Tests list completeness. A list split across a chunk boundary yields a confident but partial answer, the failure mode chunking_v2.md warns about."
+  },
+  {
+    "id": "a10",
+    "query": "What are the MVP success criteria?",
+    "category": "multi_chunk_synthesis",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "The MVP succeeds if: a new document can be added in under 5 minutes; relevant chunks are retrieved consistently; answers are grounded in retrieved content; sources can be inspected; and the system is useful enough to be used voluntarily at least once per week.",
+    "key_points": ["Add a document in under 5 minutes", "Retrieves relevant chunks consistently", "Answers grounded in retrieved content", "Sources can be inspected", "Voluntary use at least once per week"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "project_mvp.md", "quote": "- A new document can be added in less than 5 minutes"},
+      {"source": "project_mvp.md", "quote": "- The system retrieves relevant chunks consistently"},
+      {"source": "project_mvp.md", "quote": "- Answers are grounded in retrieved content"},
+      {"source": "project_mvp.md", "quote": "- Sources can be inspected"},
+      {"source": "project_mvp.md", "quote": "- The system is useful enough that I voluntarily use it at least once per week"},
+      {"source": "notes.md", "quote": "Success criteria: system is useful enough to use voluntarily at least once per week."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["project_mvp.md", "notes.md"],
+    "acceptance_criteria": "At least 4 of the 5 criteria. An answer giving only the weekly-use criterion (the notes.md version) is incomplete.",
+    "related_retrieval_query": "q16",
+    "notes": "notes.md states a one-criterion subset. Under V2 reranking, notes.md outranks project_mvp.md for q16, so an incomplete answer is a likely failure."
+  },
+  {
+    "id": "a11",
+    "query": "Which features were postponed until after the MVP, and why was a web interface among them?",
+    "category": "multi_chunk_synthesis",
+    "difficulty": "hard",
+    "expected_behavior": "answer",
+    "expected_answer": "Postponed: web interface, conversation memory, hybrid search, reranking models, agent capabilities, user authentication, automated document monitoring, multiple knowledge bases, knowledge graphs, fine-tuned models and personal 'ERP' integration. The web interface was postponed because the CLI already proves usefulness.",
+    "key_points": ["Web interface", "Conversation memory", "Hybrid search", "Reranking models", "Agent capabilities", "User authentication", "Automated document monitoring", "Multiple knowledge bases", "Knowledge graphs", "Fine-tuned models", "Personal 'ERP' integration", "Web UI reason: the CLI already proves usefulness"],
+    "forbidden_claims": ["Any mandatory MVP feature (e.g. CLI, source attribution, observability) listed as postponed"],
+    "evidence": [
+      {"source": "project_mvp.md", "quote": "## Postponed Features (Post-MVP)"},
+      {"source": "project_mvp.md", "quote": "### Web Interface"},
+      {"source": "project_mvp.md", "quote": "CLI already proves usefulness."},
+      {"source": "project_mvp.md", "quote": "### Conversation Memory"},
+      {"source": "project_mvp.md", "quote": "### Hybrid Search"},
+      {"source": "project_mvp.md", "quote": "Reranking Models"},
+      {"source": "project_mvp.md", "quote": "### Agent Capabilities"},
+      {"source": "project_mvp.md", "quote": "### User Authentication"},
+      {"source": "project_mvp.md", "quote": "### Automated Document Monitoring"},
+      {"source": "project_mvp.md", "quote": "### Multiple Knowledge Bases"},
+      {"source": "project_mvp.md", "quote": "### Knowledge Graphs"},
+      {"source": "project_mvp.md", "quote": "### Fine-Tuned Models"},
+      {"source": "project_mvp.md", "quote": "### Personal 'ERP' Integration"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["project_mvp.md"],
+    "acceptance_criteria": "At least 8 of the 11 features plus the web-interface reason, and no mandatory feature listed as postponed.",
+    "related_retrieval_query": "q17",
+    "notes": "The list spans about 130 lines and several chunks under both chunkers, so a top-5 context may not hold all of it. 'Reranking Models' has no ### heading in the source, a structure-detection edge case for V2."
+  },
+  {
+    "id": "a12",
+    "query": "What steps does answer_question() in query.py go through to answer a question?",
+    "category": "multi_chunk_synthesis",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "It retrieves the top-k chunks with semantic_search_reranked(), logs the retrieval with log_retrieval(), builds the prompt with build_rag_prompt(), generates the answer with generate_chat_response() using SYSTEM_PROMPT as the system message, and returns a dict with answer, chunks and prompt.",
+    "key_points": ["Retrieval via semantic_search_reranked (reranked, not plain)", "log_retrieval for observability", "build_rag_prompt", "generate_chat_response with SYSTEM_PROMPT", "Returns answer, chunks and prompt"],
+    "forbidden_claims": ["Retrieval uses plain semantic_search() without reranking"],
+    "evidence": [
+      {"source": "query.py", "quote": "chunks = semantic_search_reranked(question, top_k=top_k)"},
+      {"source": "query.py", "quote": "log_retrieval(question, chunks)"},
+      {"source": "query.py", "quote": "prompt = build_rag_prompt(question, chunks)"},
+      {"source": "query.py", "quote": "answer = generate_chat_response(prompt, system_override=SYSTEM_PROMPT)"}
+    ],
+    "distractors": [
+      {"source": "query.py", "quote": "↓  search.semantic_search()"}
+    ],
+    "relevant_sources": ["query.py"],
+    "acceptance_criteria": "Retrieve → log → build prompt → generate, in order, with retrieval identified as reranked. The return-dict detail is optional.",
+    "related_retrieval_query": "q20",
+    "notes": "query.py's own docstring says semantic_search() but the code calls semantic_search_reranked(). The code is authoritative; repeating the docstring tests precision."
+  },
+  {
+    "id": "a13",
+    "query": "What went wrong in the Phase 4 retrospective, and what action items came out of it?",
+    "category": "multi_chunk_synthesis",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "What went wrong: the distance metric defaulted to L2, producing garbage similarity scores; it took a full investigation cycle to find the root cause; normalize_similarity was correct but its inputs were wrong. Action items: add hnsw:space cosine to collection creation and re-ingest all documents; write an integration test for similarity-score sanity; add the metric type to config.py so it is never hardcoded in two places.",
+    "key_points": ["L2 default caused garbage similarity scores", "Full investigation cycle to find the root cause", "normalize_similarity correct but inputs wrong", "Action: declare cosine and re-ingest", "Action: similarity-sanity integration test", "Action: metric type in config.py"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "notes.md", "quote": "- Distance metric defaulted to L2, producing garbage similarity scores"},
+      {"source": "notes.md", "quote": "- Took a full investigation cycle to identify the root cause"},
+      {"source": "notes.md", "quote": "- `normalize_similarity` formula was correct but the input values were wrong"},
+      {"source": "notes.md", "quote": "- [ ] Add `hnsw:space: cosine` to collection creation and re-ingest all documents"},
+      {"source": "notes.md", "quote": "- [ ] Write integration test for similarity score sanity"},
+      {"source": "notes.md", "quote": "- [ ] Add metric type to config.py so it is never hardcoded in two places"}
+    ],
+    "distractors": [
+      {"source": "notes.md", "quote": "- Add an integration test that asserts similarity scores are in a plausible range (e.g. > 0.3 for relevant queries)"}
+    ],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "At least 2 of the 3 problems and at least 2 of the 3 action items. Mixing in 'What to do differently' items is acceptable if labelled as such.",
+    "related_retrieval_query": null,
+    "notes": "The retrospective has four sub-sections (went well / wrong / differently / action items), so it tests keeping the requested parts apart."
+  },
+  {
+    "id": "a14",
+    "query": "In the ChunkerV1 evaluation, what share of chunks had a bad start and what share had a bad end?",
+    "category": "precision",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "81% bad starts (13 of 16 chunks) and 75% bad ends (12 of 16); no chunk was clean on both.",
+    "key_points": ["81% bad starts (13/16)", "75% bad ends (12/16)"],
+    "forbidden_claims": ["Bad starts and bad ends swapped", "A per-document figure (e.g. 83%) given as the overall rate"],
+    "evidence": [
+      {"source": "chunking_v1_eval_report.md", "quote": "**81% of chunks have a broken start boundary and 75% have a broken end boundary**"},
+      {"source": "chunking_v1_eval_report.md", "quote": "| Clean chunks (both OK) | 0 | 0 | 0 | **0 / 16** |"},
+      {"source": "chunking_v2.md", "quote": "- **81% bad starts** — chunks begin mid-word or mid-sentence"}
+    ],
+    "distractors": [
+      {"source": "chunking_v1_eval_report.md", "quote": "| Bad starts | 3 (75%) | 5 (83%) | 5 (83%) | **13 / 16 (81%)** |"}
+    ],
+    "relevant_sources": ["chunking_v1_eval_report.md", "chunking_v2.md"],
+    "acceptance_criteria": "Both overall percentages correct and correctly assigned. Counts are optional.",
+    "related_retrieval_query": "q03",
+    "notes": "chunking_v2.md repeats the same figures, so either source is valid support."
+  },
+  {
+    "id": "a15",
+    "query": "Why does PKA-AI use cosine distance instead of L2 for its vector store?",
+    "category": "contextual",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "Cosine distance measures the angle between vectors and is insensitive to magnitude, which suits text embeddings; nomic-embed-text vectors are unit-normalised, so cosine is the correct choice. ChromaDB defaults to L2, which made similarity scores meaningless (all clamped to 0), so the collection explicitly declares hnsw:space cosine.",
+    "key_points": ["Cosine measures angle / insensitive to magnitude, suited to text embeddings", "ChromaDB defaults to L2", "The L2 default made similarity scores meaningless", "Collection declares hnsw:space = cosine explicitly"],
+    "forbidden_claims": ["The store uses L2 distance"],
+    "evidence": [
+      {"source": "notes.md", "quote": "- Cosine distance: measures angle between vectors, insensitive to magnitude — best for text embeddings"},
+      {"source": "notes.md", "quote": "For unit-normalised vectors, cosine distance is the correct choice."},
+      {"source": "notes.md", "quote": "ChromaDB defaults to L2 distance but text embeddings need cosine distance."},
+      {"source": "notes.md", "quote": "When wrong, similarity scores are meaningless — all clamped to 0."},
+      {"source": "chroma_store.py", "quote": "metadata={\"hnsw:space\": \"cosine\"},"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md", "chroma_store.py"],
+    "acceptance_criteria": "Explains why cosine fits text embeddings and that the L2 default caused broken scores. Naming hnsw:space is optional.",
+    "related_retrieval_query": "q06",
+    "notes": "Retrieval query q06 is a complete miss for both chunkers when chroma_store.py is the expected source; here notes.md also fully supports the answer."
+  },
+  {
+    "id": "a16",
+    "query": "Why are ChunkerV1's parameters frozen instead of being tuned?",
+    "category": "contextual",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "Changing them would silently invalidate all past retrieval comparisons and make it impossible to attribute quality changes to the right variable. New strategies must go in a new versioned class (ChunkerV2, V3, …) so results stay comparable.",
+    "key_points": ["Changing V1 invalidates past comparisons / attribution", "New experiments go in new versioned chunker classes"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "chunking_v1.md", "quote": "**Never modify V1 parameters.**"},
+      {"source": "chunking_v1.md", "quote": "Changing them silently invalidates all past retrieval comparisons and makes it"},
+      {"source": "chunking_v1.md", "quote": "impossible to attribute quality changes to the right variable."},
+      {"source": "chunking.py", "quote": "Create ChunkerV2 for any new strategy so results stay comparable."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["chunking_v1.md", "chunking.py"],
+    "acceptance_criteria": "Both key points present.",
+    "related_retrieval_query": null,
+    "notes": ""
+  },
+  {
+    "id": "a17",
+    "query": "Does the heuristic reranker contradict the MVP plan's decision to postpone reranking?",
+    "category": "contextual",
+    "difficulty": "hard",
+    "expected_behavior": "answer_with_caveat",
+    "expected_answer": "Not directly. The MVP plan postpones reranking *models* such as cross-encoders as an optimisation rather than a necessity, whereas the implemented reranker is a lightweight heuristic with no external models and no ML. The knowledge base does not explicitly reconcile the two.",
+    "key_points": ["MVP postpones reranking models (e.g. cross-encoders)", "The implemented reranker is heuristic: no external models, no ML", "Different kinds of reranking"],
+    "forbidden_claims": ["The reranker uses a cross-encoder or ML model", "The knowledge base explicitly states that the heuristic reranker was approved as an MVP exception"],
+    "evidence": [
+      {"source": "project_mvp.md", "quote": "Reranking Models"},
+      {"source": "project_mvp.md", "quote": "- Cross-encoders"},
+      {"source": "project_mvp.md", "quote": "Optimization rather than necessity."},
+      {"source": "reranker.py", "quote": "No external models. No ML. Pure signal engineering."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["project_mvp.md", "reranker.py"],
+    "acceptance_criteria": "Makes the model-based vs heuristic distinction using both sources. Also acceptable: presents both facts and says the KB does not state how they relate. Unacceptable: an unqualified yes/no with no supporting distinction.",
+    "related_retrieval_query": null,
+    "notes": "Interpretive: the conclusion is an inference across two documents, not a stated fact. Grade on the reasoning and evidence, not on yes/no."
+  },
+  {
+    "id": "a18",
+    "query": "What problem was ChunkerV2 designed to solve?",
+    "category": "contextual",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "V1 chunks were retrievable but not readable: the character splitter cut mid-word and mid-sentence (81% bad starts, 75% bad ends, no clean chunks) and fragmented code blocks. V2 splits at semantic boundaries (headings, paragraphs, sentences) and protects structures such as code blocks, tables and lists, so retrieved chunks can be understood without their neighbours.",
+    "key_points": ["Chunks were findable but not readable", "Mid-word / mid-sentence boundaries in V1", "Code block fragmentation", "V2 splits at semantic boundaries and protects structures"],
+    "forbidden_claims": ["V2 was designed mainly to improve retrieval ranking or search"],
+    "evidence": [
+      {"source": "chunking_v2.md", "quote": "The problem is not *finding* the right chunk — it is *reading* it once found."},
+      {"source": "chunking_v2.md", "quote": "**chunks are retrievable but not readable**"},
+      {"source": "chunking_v2.md", "quote": "- **Code block fragmentation** — the most destructive failure mode; variable assignments split from their declarations, fenced blocks broken mid-syntax"},
+      {"source": "chunking_v2.md", "quote": "V2 improves the content quality delivered to the LLM — not the search mechanism that finds it."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["chunking_v2.md"],
+    "acceptance_criteria": "Captures the readable-vs-retrievable framing and at least one concrete V1 failure (boundaries or code blocks).",
+    "related_retrieval_query": "q02",
+    "notes": ""
+  },
+  {
+    "id": "a19",
+    "query": "Which of my habits have stuck, and what explains why some habits survive?",
+    "category": "contextual",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "The weekly review (Sunday evening), the daily shutdown ritual and the morning deep work block have stuck. Habits tied to existing anchors (shutdown → walk, Sunday → review) survive; habits without an anchor drift and disappear.",
+    "key_points": ["Weekly review", "Daily shutdown ritual", "Morning deep work block", "Habits tied to existing anchors survive"],
+    "forbidden_claims": ["Exercise, reading before bed or journaling listed as habits that stuck"],
+    "evidence": [
+      {"source": "notes.md", "quote": "- Weekly review (Sunday evening)"},
+      {"source": "notes.md", "quote": "- Daily shutdown ritual"},
+      {"source": "notes.md", "quote": "- Morning deep work block"},
+      {"source": "notes.md", "quote": "Pattern: habits that are tied to existing anchors (shutdown → walk, Sunday → review) survive."},
+      {"source": "notes.md", "quote": "Habits that float without an anchor drift and disappear."}
+    ],
+    "distractors": [
+      {"source": "notes.md", "quote": "- Consistent exercise schedule"},
+      {"source": "notes.md", "quote": "- Daily journaling"}
+    ],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "Names the three habits that stuck, none of the failing ones, and gives the anchor explanation.",
+    "related_retrieval_query": null,
+    "notes": "The failing-habits list sits directly below the successful one, so the wrong list is easy to pick up."
+  },
+  {
+    "id": "a20",
+    "query": "Why is observability treated as a mandatory part of the MVP?",
+    "category": "contextual",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "Retrospectives identified observability as a weakness. Logging the query, retrieved chunks, distances and sources early saves a great deal of debugging time later, so the MVP must log retrieval information and show the query, chunk IDs, document sources and similarity scores.",
+    "key_points": ["Retrospectives identified observability as a weakness", "Early logging saves debugging time", "What must be shown: query, chunk IDs, sources, similarity scores"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "project_mvp.md", "quote": "This is important because retrospectives identified observability as a weakness."},
+      {"source": "notes.md", "quote": "Observability is more important than it seems at the start."},
+      {"source": "notes.md", "quote": "Logging query, retrieved chunks, distances, and sources early saves enormous debugging time later."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["project_mvp.md", "notes.md"],
+    "acceptance_criteria": "Gives the retrospective reason. Combining it with the debugging-time rationale from notes.md is the full answer.",
+    "related_retrieval_query": null,
+    "notes": "Cross-document: the requirement is in project_mvp.md and the lesson behind it is in notes.md."
+  },
+  {
+    "id": "a21",
+    "query": "Which chat model does PKA-AI use?",
+    "category": "precision",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "llama3.1 (the notes specify llama3.1:8b), run locally through Ollama.",
+    "key_points": ["llama3.1"],
+    "forbidden_claims": ["nomic-embed-text as the chat model"],
+    "evidence": [
+      {"source": "config.py", "quote": "CHAT_MODEL = \"llama3.1\""},
+      {"source": "notes.md", "quote": "- `llama3.1:8b` — main chat and reasoning model"}
+    ],
+    "distractors": [
+      {"source": "notes.md", "quote": "- `nomic-embed-text` — embedding model for semantic search"}
+    ],
+    "relevant_sources": ["config.py", "notes.md"],
+    "acceptance_criteria": "Names llama3.1 (with or without :8b) as the chat model. Also naming the embedding model is fine if its role is labelled correctly.",
+    "related_retrieval_query": "q09",
+    "notes": ""
+  },
+  {
+    "id": "a22",
+    "query": "What overlap size did the ChunkerV1 evaluation report recommend for ChunkerV2?",
+    "category": "precision",
+    "difficulty": "hard",
+    "expected_behavior": "answer",
+    "expected_answer": "Increase the overlap from 100 to 200 characters. (The later ChunkerV2 spec replaced this with adaptive overlap and left exact values to implementation.)",
+    "key_points": ["200 characters", "Up from 100"],
+    "forbidden_claims": ["150 characters as the recommendation", "The V2 spec fixes overlap at 200 characters"],
+    "evidence": [
+      {"source": "chunking_v1_eval_report.md", "quote": "**2. Increase overlap from 100 → 200 chars**"}
+    ],
+    "distractors": [
+      {"source": "chunking_v2.md", "quote": "\"overlap_chars\": 150"},
+      {"source": "chunking_v2.md", "quote": "Exact overlap values (in tokens or characters) are an implementation decision."}
+    ],
+    "relevant_sources": ["chunking_v1_eval_report.md"],
+    "acceptance_criteria": "States 200 characters attributed to the evaluation report. Noting the V2 spec's adaptive approach is a plus, not required.",
+    "related_retrieval_query": null,
+    "notes": "The V2 spec has an example metadata value of 150 overlap chars, which is an easy wrong answer."
+  },
+  {
+    "id": "a23",
+    "query": "What starting soft and hard chunk size limits does the ChunkerV2 spec suggest?",
+    "category": "precision",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "Soft limit 1200 characters and hard limit 2000 characters, suggested as a starting point to be adjusted based on the chunk count distribution.",
+    "key_points": ["Soft = 1200 chars", "Hard = 2000 chars", "Starting suggestion, not final"],
+    "forbidden_claims": ["500–1500 tokens given as the soft/hard limits"],
+    "evidence": [
+      {"source": "chunking_v2.md", "quote": "Suggest starting with soft=1200 chars, hard=2000 chars and adjusting based on chunk count distribution."}
+    ],
+    "distractors": [
+      {"source": "chunking_v2.md", "quote": "Typical range: **~500–1500 tokens**"}
+    ],
+    "relevant_sources": ["chunking_v2.md"],
+    "acceptance_criteria": "Both numbers correct with units. Presenting them as fixed requirements rather than starting suggestions is a minor deduction.",
+    "related_retrieval_query": null,
+    "notes": "The answer is in 'Open Questions for Implementation', far from the 'Chunk Size Philosophy' section that a retriever is likely to surface first."
+  },
+  {
+    "id": "a24",
+    "query": "In my time-blocking schedule, what is the 13:00–14:00 slot for?",
+    "category": "precision",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "A shallow work batch: email, Slack and admin.",
+    "key_points": ["Shallow work batch (email, Slack, admin)"],
+    "forbidden_claims": ["Meetings as the purpose of the 13:00–14:00 block"],
+    "evidence": [
+      {"source": "notes.md", "quote": "- 13:00–14:00 → Shallow work batch (email, Slack, admin)"}
+    ],
+    "distractors": [
+      {"source": "notes.md", "quote": "- Early afternoon (13:00–15:00): lower energy, good for meetings and admin"}
+    ],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "Identifies the shallow work batch. Mentioning the related energy-management note is fine if it is not presented as the slot's purpose.",
+    "related_retrieval_query": null,
+    "notes": "The Energy Management section covers an overlapping time window with a different recommendation."
+  },
+  {
+    "id": "a25",
+    "query": "What similarity score does normalize_similarity return for orthogonal vectors?",
+    "category": "ambiguous",
+    "difficulty": "hard",
+    "expected_behavior": "answer_with_caveat",
+    "expected_answer": "The knowledge base is inconsistent. The docstring says orthogonal maps to 0.5, but the formula max(0, min(1, 1 − distance)) applied to an orthogonal distance of 1.0 returns 0.0. (The 0.5 value matches the reranker's 1 / (1 + distance), not this function.)",
+    "key_points": ["Docstring says 0.5", "The formula gives 0.0 for distance 1.0", "The two disagree"],
+    "forbidden_claims": ["An unqualified 0.5 presented as what the function returns"],
+    "evidence": [
+      {"source": "helpers.py", "quote": "return max(0.0, min(1.0, 1.0 - distance))"},
+      {"source": "helpers.py", "quote": "1.0 → orthogonal vectors (no relation)"},
+      {"source": "helpers.py", "quote": "0.5 → orthogonal"}
+    ],
+    "distractors": [
+      {"source": "reranker.py", "quote": "distance = 1.0  →  score = 0.5  (orthogonal)"}
+    ],
+    "relevant_sources": ["helpers.py"],
+    "acceptance_criteria": "Best: flags the docstring/formula conflict. Acceptable: 0.0 derived from the formula. Unacceptable: 0.5 with no caveat.",
+    "related_retrieval_query": "q13",
+    "notes": "This is a real inconsistency inside helpers.py, not a constructed trap. It tests whether the model reads the code or repeats the docstring."
+  },
+  {
+    "id": "a26",
+    "query": "What temperature setting does PKA-AI use when calling the chat model?",
+    "category": "insufficient_information",
+    "difficulty": "medium",
+    "expected_behavior": "abstain",
+    "expected_answer": null,
+    "key_points": [],
+    "forbidden_claims": ["Any specific temperature value presented as PKA-AI's setting"],
+    "evidence": [],
+    "distractors": [
+      {"source": "notes.md", "quote": "- **Temperature**: controls randomness in outputs (0 = deterministic, 1+ = creative/chaotic)"},
+      {"source": "llm.py", "quote": "response = ollama.chat("}
+    ],
+    "relevant_sources": [],
+    "acceptance_criteria": "States that the knowledge base does not specify a temperature. Also acceptable: noting that the chat call in llm.py sets none, optionally explaining what temperature is. Any concrete value, or a claimed Ollama default, is outside knowledge and unacceptable.",
+    "related_retrieval_query": null,
+    "notes": "notes.md defines temperature in general, which is a strong temptation to answer with 0 or 1."
+  },
+  {
+    "id": "a27",
+    "query": "What GPU or hardware does PKA-AI run on?",
+    "category": "insufficient_information",
+    "difficulty": "easy",
+    "expected_behavior": "abstain",
+    "expected_answer": null,
+    "key_points": [],
+    "forbidden_claims": ["Any specific GPU, CPU, RAM amount or machine"],
+    "evidence": [],
+    "distractors": [
+      {"source": "notes.md", "quote": "- Slower than cloud APIs (depends on hardware)"},
+      {"source": "notes.md", "quote": "Ollama is a local model runtime that allows running LLMs on your own machine."}
+    ],
+    "relevant_sources": [],
+    "acceptance_criteria": "States that the knowledge base does not describe the hardware. Mentioning that models run locally via Ollama is acceptable context.",
+    "related_retrieval_query": null,
+    "notes": ""
+  },
+  {
+    "id": "a28",
+    "query": "What Accuracy@1 did ChunkerV2 achieve when it was evaluated?",
+    "category": "insufficient_information",
+    "difficulty": "hard",
+    "expected_behavior": "abstain",
+    "expected_answer": null,
+    "key_points": [],
+    "forbidden_claims": ["Any measured V2 score (e.g. 10/20, 50%, 14/20)", "V2 spec targets presented as achieved results"],
+    "evidence": [],
+    "distractors": [
+      {"source": "chunking_v2.md", "quote": "**Status:** Design (not yet implemented)"},
+      {"source": "chunking_v2.md", "quote": "| Correct top-1 chunk | ≥ 4/5 per document | ≥ 4/5 per document |"}
+    ],
+    "relevant_sources": [],
+    "acceptance_criteria": "States that the knowledge base has no V2 evaluation results. It may add that the V2 document is a design spec and quote its targets, clearly labelled as targets.",
+    "related_retrieval_query": null,
+    "notes": "KB-snapshot sensitive: V2 results exist in data/evaluation but not in data/raw. Any real score in the answer means outside-knowledge leakage. Reclassify if evaluation reports are ever ingested."
+  },
+  {
+    "id": "a29",
+    "query": "Which technical book am I currently reading?",
+    "category": "precision",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "None yet: the current book is to be decided after finishing PKA-AI phase 5. The backlog contains Designing Data-Intensive Applications and The Pragmatic Programmer.",
+    "key_points": ["No current book; to be decided after phase 5"],
+    "forbidden_claims": ["A backlog book presented as the current book"],
+    "evidence": [
+      {"source": "notes.md", "quote": "Current book: to be decided after finishing PKA-AI phase 5."}
+    ],
+    "distractors": [
+      {"source": "notes.md", "quote": "Backlog: Designing Data-Intensive Applications, The Pragmatic Programmer."}
+    ],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "Says no book has been chosen yet. Mentioning the backlog as backlog is fine. A plain 'I don't know' is a partial pass: safe but misses a stated fact.",
+    "related_retrieval_query": null,
+    "notes": "False-premise question: it assumes a current book exists. The KB answers it directly, so this is not an insufficient-information case."
+  },
+  {
+    "id": "a30",
+    "query": "What is the deadline for finishing the MVP?",
+    "category": "insufficient_information",
+    "difficulty": "easy",
+    "expected_behavior": "abstain",
+    "expected_answer": null,
+    "key_points": [],
+    "forbidden_claims": ["Any date or duration presented as the MVP deadline"],
+    "evidence": [],
+    "distractors": [
+      {"source": "notes.md", "quote": "Phase 5 in progress: RAG pipeline and grounded answer generation."},
+      {"source": "notes.md", "quote": "Progress: ~70% complete. Retrieval works. Generation is next."}
+    ],
+    "relevant_sources": [],
+    "acceptance_criteria": "States that no deadline is given. Reporting the stated progress (phase 5 in progress, ~70%) as context is acceptable.",
+    "related_retrieval_query": null,
+    "notes": "The '< 5 minutes' success criterion and the '~70% complete' progress note are numeric distractors."
+  },
+  {
+    "id": "a31",
+    "query": "What is the assistant's system prompt?",
+    "category": "ambiguous",
+    "difficulty": "hard",
+    "expected_behavior": "answer_with_caveat",
+    "expected_answer": "Two system prompts exist. The RAG pipeline (query.py) passes prompts.py's SYSTEM_PROMPT, which tells the model to answer only from the provided context, not to use outside knowledge, to reply exactly \"I don't know based on the provided context.\" when the answer is missing, and to be concise and cite sources. llm.py defines a shorter default (\"You are a helpful personal knowledge assistant. Use the provided knowledge base context elements to resolve user queries concisely and transparently.\") that is overridden in that pipeline.",
+    "key_points": ["prompts.py SYSTEM_PROMPT is the one used by the RAG pipeline", "Its rules: context only, no outside knowledge, exact refusal reply, concise/cite", "llm.py has a different default prompt"],
+    "forbidden_claims": ["llm.py's prompt presented as the only system prompt"],
+    "evidence": [
+      {"source": "prompts.py", "quote": "- Answer using ONLY the information provided in the context below."},
+      {"source": "prompts.py", "quote": "- Do NOT use outside knowledge or assumptions."},
+      {"source": "query.py", "quote": "answer = generate_chat_response(prompt, system_override=SYSTEM_PROMPT)"},
+      {"source": "query.py", "quote": "from src.config.prompts import build_rag_prompt, format_context_block, SYSTEM_PROMPT"},
+      {"source": "llm.py", "quote": "Use the provided knowledge base context elements to resolve user queries concisely and transparently."}
+    ],
+    "distractors": [],
+    "relevant_sources": ["prompts.py", "query.py", "llm.py"],
+    "acceptance_criteria": "Best: identifies prompts.py's prompt as the pipeline's and acknowledges llm.py's. Acceptable: gives prompts.py's rules alone. Unacceptable: gives only llm.py's prompt as the answer.",
+    "related_retrieval_query": "q08",
+    "notes": "Resolving which prompt is active requires a third file (query.py)."
+  },
+  {
+    "id": "a32",
+    "query": "Has the cosine-distance fix from the Phase 4 retrospective been applied?",
+    "category": "ambiguous",
+    "difficulty": "hard",
+    "expected_behavior": "answer_with_caveat",
+    "expected_answer": "The evidence conflicts. The vector-store code declares hnsw:space cosine at collection creation, so the code change appears done, but the retrospective's action item is still unchecked and the knowledge base does not confirm that all documents were re-ingested.",
+    "key_points": ["Code declares hnsw:space cosine", "Retrospective action item is still unchecked", "Re-ingestion cannot be confirmed from the KB"],
+    "forbidden_claims": ["An unqualified 'yes, fully applied including re-ingestion'", "An unqualified 'no, not applied'"],
+    "evidence": [
+      {"source": "notes.md", "quote": "- [ ] Add `hnsw:space: cosine` to collection creation and re-ingest all documents"},
+      {"source": "chroma_store.py", "quote": "metadata={\"hnsw:space\": \"cosine\"},"},
+      {"source": "search.py", "quote": "metadata={\"hnsw:space\": \"cosine\"},"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md", "chroma_store.py", "search.py"],
+    "acceptance_criteria": "Presents both the code evidence and the open action item. Concluding the code part is done while re-ingestion is unconfirmed is ideal.",
+    "related_retrieval_query": null,
+    "notes": "A time-dependent contradiction: notes.md was written before the fix and never updated."
+  },
+  {
+    "id": "a33",
+    "query": "In which file are the ChunkerV1 constants defined?",
+    "category": "ambiguous",
+    "difficulty": "medium",
+    "expected_behavior": "answer_with_caveat",
+    "expected_answer": "The code imports them from src.config.config_chunking (src/config/config_chunking.py), which the ChunkerV2 spec also uses. chunking_v1.md lists src/config/chunking.py instead, which appears to be outdated.",
+    "key_points": ["src/config/config_chunking.py (per the code import)", "chunking_v1.md says src/config/chunking.py (discrepancy)"],
+    "forbidden_claims": ["src/config/chunking.py presented as the location with no caveat"],
+    "evidence": [
+      {"source": "chunking.py", "quote": "from src.config.config_chunking import ("},
+      {"source": "chunking_v2.md", "quote": "- V2 constants go in a new block in `src/config/config_chunking.py`: `CHUNKER_V2_*`"},
+      {"source": "chunking_v1.md", "quote": "- Constants: `src/config/chunking.py`"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["chunking.py", "chunking_v2.md", "chunking_v1.md"],
+    "acceptance_criteria": "Best: config_chunking with the discrepancy noted. Acceptable: config_chunking alone. Unacceptable: src/config/chunking.py alone.",
+    "related_retrieval_query": null,
+    "notes": "The actual constant values are not in the KB, only the import, so a follow-up 'what value is CHUNKER_V1_SIZE?' could only be answered from the docstring (1000)."
+  },
+  {
+    "id": "a34",
+    "query": "What are my core values for making decisions?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "Autonomy (work I control, on problems I care about), Mastery (continuous improvement in skills that matter) and Contribution (building things that are genuinely useful to others). When in doubt, run a decision against these three.",
+    "key_points": ["Autonomy", "Mastery", "Contribution"],
+    "forbidden_claims": [],
+    "evidence": [
+      {"source": "notes.md", "quote": "1. Autonomy — work I control, on problems I care about"},
+      {"source": "notes.md", "quote": "2. Mastery — continuous improvement in skills that matter"},
+      {"source": "notes.md", "quote": "3. Contribution — building things that are genuinely useful to others"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["notes.md"],
+    "acceptance_criteria": "All three values named.",
+    "related_retrieval_query": null,
+    "notes": "Personal-domain coverage; no technical vocabulary overlap with the rest of the KB."
+  },
+  {
+    "id": "a35",
+    "query": "What happens in generate_embeddings() if embedding one of the chunks fails?",
+    "category": "contextual",
+    "difficulty": "medium",
+    "expected_behavior": "answer",
+    "expected_answer": "The exception is caught and logged as an error for that chunk index, and the loop continues: the failed chunk is skipped, so the returned list can be shorter than the input.",
+    "key_points": ["Exception is caught and logged", "Processing continues with the next chunk", "Failed chunk is omitted from the results"],
+    "forbidden_claims": ["The whole batch fails or the exception propagates", "The failed chunk is retried"],
+    "evidence": [
+      {"source": "embedding.py", "quote": "except Exception as e:"},
+      {"source": "embedding.py", "quote": "logger.error(f\"Error generation vector on chunk {i}: {e}\")"}
+    ],
+    "distractors": [],
+    "relevant_sources": ["embedding.py"],
+    "acceptance_criteria": "States that the error is logged and the chunk skipped without stopping the batch. Noting the shorter output is a plus.",
+    "related_retrieval_query": "q04",
+    "notes": "Requires reading control flow, not just matching a sentence."
+  },
+  {
+    "id": "a36",
+    "query": "What context text is passed to the model when no chunks are retrieved?",
+    "category": "direct_fact",
+    "difficulty": "easy",
+    "expected_behavior": "answer",
+    "expected_answer": "The placeholder string \"(No context retrieved.)\".",
+    "key_points": ["\"(No context retrieved.)\""],
+    "forbidden_claims": ["The no-context reply \"I don't know based on the provided context.\" presented as the context text"],
+    "evidence": [
+      {"source": "prompts.py", "quote": "return \"(No context retrieved.)\""},
+      {"source": "rag_assistant.py", "quote": "return \"(No context retrieved.)\""}
+    ],
+    "distractors": [
+      {"source": "prompts.py", "quote": "NO_CONTEXT_REPLY = \"I don't know based on the provided context.\""}
+    ],
+    "relevant_sources": ["prompts.py", "rag_assistant.py"],
+    "acceptance_criteria": "Gives the placeholder string and does not confuse it with the model's no-context reply.",
+    "related_retrieval_query": null,
+    "notes": "Distinguishes the placeholder fed into the prompt from the refusal string the model should output."
+  }
+]
